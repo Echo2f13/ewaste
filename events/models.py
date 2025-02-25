@@ -96,8 +96,8 @@ class userCredits(models.Model):
 class deliveryJob(models.Model):
     deliveryJob_id = models.BigAutoField(primary_key='True', auto_created='True')
     deliveryJob_product = models.ForeignKey(product, on_delete=models.CASCADE)
-    deliveryJob_seller = models.ForeignKey(userFull, on_delete=models.CASCADE)
-    deliveryJob_buyer = models.ForeignKey(userFull, on_delete=models.CASCADE)
+    deliveryJob_seller = models.ForeignKey(userFull, on_delete=models.CASCADE, related_name='delivery_jobs_seller')
+    deliveryJob_buyer = models.ForeignKey(userFull, on_delete=models.CASCADE, related_name='delivery_jobs_buyer')
     deliveryJob_deliveryGuy = models.ForeignKey(deliveryGuy, on_delete=models.CASCADE)
     deliveryJob_status = models.IntegerField(default=0)
     
