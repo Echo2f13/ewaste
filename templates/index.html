@@ -48,7 +48,9 @@
                             <!-- Logo -->
                             <div class="col-xl-2 col-lg-2">
                                 <div class="logo">
-                                    <a href="#"><img src="{% static 'assets/img/logo/logo.png' %}" alt=""></a>
+                                    <a href="{% url 'Index' %}">
+                                        <h1 style="color: aliceblue;">EWMS</h1>
+                                    </a>
                                 </div>
                             </div>
                             <div class="col-xl-10 col-lg-10">
@@ -57,11 +59,13 @@
                                     <div class="main-menu d-none d-lg-block">
                                         <nav>
                                             <ul id="navigation">
-                                                <li class="active"><a href="{% url 'Index' %}">Home</a></li>
+                                                <li class="active"><a href="{% url 'Index' %}"></a></li>
                                                 <!-- Button -->
-                                                <li class="button-header margin-left "><a href="#" class="btn">Join</a>
+                                                <li class="button-header margin-left "><a href="{% url 'Signup' %}"
+                                                        class="btn">Register</a>
                                                 </li>
-                                                <li class="button-header"><a href="#" class="btn btn3">Log in</a>
+                                                <li class="button-header"><a href="{% url 'Login' %}"
+                                                        class="btn btn3">Log in</a>
                                                 </li>
                                             </ul>
                                         </nav>
@@ -90,12 +94,10 @@
                         <div class="row">
                             <div class="col-xl-6 col-lg-7 col-md-12">
                                 <div class="hero__caption">
-                                    <h1 data-animation="fadeInLeft" data-delay="0.2s">Online learning<br> platform</h1>
-                                    <p data-animation="fadeInLeft" data-delay="0.4s">Build skills with courses,
-                                        certificates, and degrees
-                                        online from world-class universities and companies</p>
-                                    <a href="#" class="btn hero-btn" data-animation="fadeInLeft" data-delay="0.7s">Join
-                                        for Free</a>
+                                    <h1 data-animation="fadeInLeft" data-delay="0.2s">Online E Waste Recycling<br> platform</h1>
+                                    <p data-animation="fadeInLeft" data-delay="0.4s">Rapid technological advancements lead to a surge in
+                                        outdated gadgets, contributing to e-waste.</p>
+                                    <a href="{% url 'Signup' %}" class="btn hero-btn" data-animation="fadeInLeft" data-delay="0.7s">Register to browse</a>
                                 </div>
                             </div>
                         </div>
@@ -113,7 +115,7 @@
                                 <img src="{% static 'assets/img/icon/icon1.svg' %}" alt="">
                             </div>
                             <div class="features-caption">
-                                <h3>60+ UX courses</h3>
+                                <h3>100% quality assurance</h3>
                                 <p>The automated process all your website tasks.</p>
                             </div>
                         </div>
@@ -124,8 +126,8 @@
                                 <img src="{% static 'assets/img/icon/icon2.svg' %}" alt="">
                             </div>
                             <div class="features-caption">
-                                <h3>Expert instructors</h3>
-                                <p>The automated process all your website tasks.</p>
+                                <h3>Expert Evaluators</h3>
+                                <p>Provides only products that are evaluated with high quality.</p>
                             </div>
                         </div>
                     </div>
@@ -135,8 +137,8 @@
                                 <img src="{% static 'assets/img/icon/icon3.svg' %}" alt="">
                             </div>
                             <div class="features-caption">
-                                <h3>Life time access</h3>
-                                <p>The automated process all your website tasks.</p>
+                                <h3>Fast Delivery</h3>
+                                <p>Delivery will be done as per right scheduled.</p>
                             </div>
                         </div>
                     </div>
@@ -169,76 +171,46 @@
                                 <div class="single-footer-caption mb-30">
                                     <!-- logo -->
                                     <div class="footer-logo mb-25">
-                                        <a href="index.html"><img src="{% static 'assets/img/logo/logo2_footer.png' %}"
-                                                alt=""></a>
+                                        <a href="{% url 'Index' %}">
+                                            <h1 style="color: aliceblue;">E-waste</h1>
+                                        </a>
                                     </div>
                                     <div class="footer-tittle">
                                         <div class="footer-pera">
-                                            <p>This is place where you can learn from home.</p>
+                                            <p>This is place where you can recycle electronic waste.</p>
                                         </div>
                                     </div>
-                                    <!-- social -->
-                                    <div class="footer-social">
-                                        <a href="#"><i class="fab fa-twitter"></i></a>
-                                        <a href="https://bit.ly/sai4ull"><i class="fab fa-facebook-f"></i></a>
-                                        <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-5">
+                        <div class="col-xl-6 col-lg-5 col-md-6 col-sm-6">
                             <div class="single-footer-caption mb-50">
                                 <div class="footer-tittle">
-                                    <h4>Our solutions</h4>
-                                    <ul>
-                                        <li><a href="#">Design & creatives</a></li>
-                                        <li><a href="#">Telecommunication</a></li>
-                                        <li><a href="#">Restaurant</a></li>
-                                        <li><a href="#">Programing</a></li>
-                                        <li><a href="#">Architecture</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
-                            <div class="single-footer-caption mb-50">
-                                <div class="footer-tittle">
-                                    <h4>Support</h4>
-                                    <ul>
-                                        <li><a href="#">Design & creatives</a></li>
-                                        <li><a href="#">Telecommunication</a></li>
-                                        <li><a href="#">Restaurant</a></li>
-                                        <li><a href="#">Programing</a></li>
-                                        <li><a href="#">Architecture</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                            <div class="single-footer-caption mb-50">
-                                <div class="footer-tittle">
-                                    <h4>Company</h4>
-                                    <ul>
-                                        <li><a href="#">Design & creatives</a></li>
-                                        <li><a href="#">Telecommunication</a></li>
-                                        <li><a href="#">Restaurant</a></li>
-                                        <li><a href="#">Programing</a></li>
-                                        <li><a href="#">Architecture</a></li>
-                                    </ul>
+                                    <h4>E-Waste: A Growing Threat to Our Planet</h4>
+                                    <p>
+                                        E-waste refers to discarded electronic devices like smartphones, laptops,
+                                        televisions, and batteries. Rapid technological advancements lead to a surge in
+                                        outdated gadgets, contributing to e-waste. Many of these devices contain toxic
+                                        materials such as lead, mercury, and cadmium, which harm the environment and
+                                        human health. Improper disposal causes soil, air, and water pollution,
+                                        increasing risks of lung diseases, brain damage, and skin disorders.Workers in
+                                        informal recycling sectors, particularly in developing countries, are most
+                                        affected due to unsafe dismantling practices</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- footer-bottom area -->
-            <div class="footer-bottom-area">
-                <div class="container">
-                    <div class="footer-border">
-                        <div class="row d-flex align-items-center">
-                            <div class="col-xl-12 ">
-                                <div class="footer-copy-right text-center">
-                                    <p>Hope you have great time learning.</p>
+                <!-- footer-bottom area -->
+                <div class="footer-bottom-area">
+                    <div class="container">
+                        <div class="footer-border">
+                            <div class="row d-flex align-items-center">
+                                <div class="col-xl-12 ">
+                                    <div class="footer-copy-right text-center">
+                                        <p>Hope you have great time browsing.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
