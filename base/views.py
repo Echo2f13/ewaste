@@ -89,3 +89,9 @@ def loginForm(request):
 def logout_view(request):
     logout(request)
     return redirect("Login")
+
+def profile(request):
+    return render(request, 'base/profile.html')
+
+def home(request):
+    return render(request, 'base/home.html')
