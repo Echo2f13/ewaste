@@ -66,13 +66,7 @@ def loginForm(request):
         if authenticated_user:
             if user.is_active and not user.is_staff and not user.is_superuser:
                 login(request, authenticated_user)
-                return render(
-                    request,
-                    "base/home.html",
-                    {
-                        "user": user,
-                    },
-                )
+                return redirect("home", pk=user.id)
             else:
                 return render(
                     request,
@@ -90,8 +84,8 @@ def logout_view(request):
     logout(request)
     return redirect("Login")
 
-def profile(request):
+def profile(request,pk):
     return render(request, 'base/profile.html')
 
-def home(request):
+def home(request,pk):
     return render(request, 'base/home.html')
