@@ -89,3 +89,6 @@ def profile(request,pk):
 
 def home(request,pk):
     return render(request, 'base/home.html')
+
+def sell(request,pk):
+    return render(request, 'base/sell.html')
