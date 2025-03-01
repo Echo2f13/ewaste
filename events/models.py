@@ -57,6 +57,7 @@ def product_image_upload_path(instance, filename, index):
 class product(models.Model):
     product_id = models.BigAutoField(primary_key=True, auto_created=True)
     product_seller = models.ForeignKey(userFull, on_delete=models.CASCADE)
+    product_name = models.CharField(max_length=100, null=True)
     
     product_category = models.CharField(max_length=10, choices=PRODUCT_CATEGORIES, default='OTH')
     product_description = models.CharField(max_length=5000)

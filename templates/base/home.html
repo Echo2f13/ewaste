@@ -63,7 +63,7 @@
                                                     <img src="{% static 'assets/img/post/post_4.png' %}"
                                                         alt="{% static 'assets/img/post/post_4.png' %}"
                                                         class="profile-icon"> <span class="menu-dots">⫶</span>
-                                                    <ul style="margin0px; padding:0px;" class="dropdown-menu">
+                                                    <ul style="margin:0px; padding:0px;" class="dropdown-menu">
                                                         <li style="margin:0px; padding:0px;"><a
                                                                 href="{% url 'profile' user.id %} "
                                                                 class="btn btn3">Profile</a></li>
@@ -122,124 +122,41 @@
                         </div>
                     </div>
                 </div>
-                <h2>Here</h2>
+                {% for category, products in categorized_products.items %}
+                {% if products %}
+                <h1>{{ category }}</h1>
                 <div class="courses-actives">
+                    {% for product in products %}
                     <!-- Single -->
                     <div class="properties pb-20">
                         <div class="properties__card">
                             <img style="width:100%; height: 200px; border-radius: 10px 10px 0px 0px;"
-                                src="{% static 'assets/img/post/post_4.png' %}" alt="">
+                                src="{{ product.product_image_1.url }}" alt="{{ product.product_description }}">
                             <div class="properties__caption">
-                                <h3>Product Name</h3>
-                                <p style="font-size: 16px;"><strong style="font-size: 16px; padding-right: 15px;">
-                                        here is the description</strong></p>
+                                <h3>{{ product.product_description }}</h3>
+                                <p style="font-size: 16px;">
+                                    <strong
+                                        style="font-size: 16px; padding-right: 15px;">{{ product.product_description }}</strong>
+                                </p>
                                 <div class="properties__footer d-flex justify-content-between align-items-center">
                                     <div class="restaurant-name">
                                         <p>Evaluated</p>
                                     </div>
                                     <div class="price">
-                                        <span>₹ 10</span>
+                                        <span>₹ {{ product.product_sell_price }}</span>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#">find
-                                    out more</button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#">
+                                    Find out more
+                                </button>
                             </div>
                         </div>
                     </div>
                     <!-- Single -->
-                    <!-- Single -->
-                    <div class="properties pb-20">
-                        <div class="properties__card">
-                            <img style="width:100%; height: 200px; border-radius: 10px 10px 0px 0px;"
-                                src="{% static 'assets/img/post/post_4.png' %}" alt="">
-                            <div class="properties__caption">
-                                <h3>Product Name</h3>
-                                <p style="font-size: 16px;"><strong style="font-size: 16px; padding-right: 15px;">
-                                        here is the description</strong></p>
-                                <div class="properties__footer d-flex justify-content-between align-items-center">
-                                    <div class="restaurant-name">
-                                        <p>Evaluated</p>
-                                    </div>
-                                    <div class="price">
-                                        <span>₹ 10</span>
-                                    </div>
-                                </div>
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#">find
-                                    out more</button>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Single -->
-                    <!-- Single -->
-                    <div class="properties pb-20">
-                        <div class="properties__card">
-                            <img style="width:100%; height: 200px; border-radius: 10px 10px 0px 0px;"
-                                src="{% static 'assets/img/post/post_4.png' %}" alt="">
-                            <div class="properties__caption">
-                                <h3>Product Name</h3>
-                                <p style="font-size: 16px;"><strong style="font-size: 16px; padding-right: 15px;">
-                                        here is the description</strong></p>
-                                <div class="properties__footer d-flex justify-content-between align-items-center">
-                                    <div class="restaurant-name">
-                                        <p>Evaluated</p>
-                                    </div>
-                                    <div class="price">
-                                        <span>₹ 10</span>
-                                    </div>
-                                </div>
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#">find
-                                    out more</button>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Single -->
-                    <!-- Single -->
-                    <div class="properties pb-20">
-                        <div class="properties__card">
-                            <img style="width:100%; height: 200px; border-radius: 10px 10px 0px 0px;"
-                                src="{% static 'assets/img/post/post_4.png' %}" alt="">
-                            <div class="properties__caption">
-                                <h3>Product Name</h3>
-                                <p style="font-size: 16px;"><strong style="font-size: 16px; padding-right: 15px;">
-                                        here is the description</strong></p>
-                                <div class="properties__footer d-flex justify-content-between align-items-center">
-                                    <div class="restaurant-name">
-                                        <p>Evaluated</p>
-                                    </div>
-                                    <div class="price">
-                                        <span>₹ 10</span>
-                                    </div>
-                                </div>
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#">find
-                                    out more</button>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Single -->
-                    <!-- Single -->
-                    <div class="properties pb-20">
-                        <div class="properties__card">
-                            <img style="width:100%; height: 200px; border-radius: 10px 10px 0px 0px;"
-                                src="{% static 'assets/img/post/post_4.png' %}" alt="">
-                            <div class="properties__caption">
-                                <h3>Product Name</h3>
-                                <p style="font-size: 16px;"><strong style="font-size: 16px; padding-right: 15px;">
-                                        here is the description</strong></p>
-                                <div class="properties__footer d-flex justify-content-between align-items-center">
-                                    <div class="restaurant-name">
-                                        <p>Evaluated</p>
-                                    </div>
-                                    <div class="price">
-                                        <span>₹ 10</span>
-                                    </div>
-                                </div>
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#">find
-                                    out more</button>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Single -->
+                    {% endfor %}
                 </div>
+                {% endif %}
+                {% endfor %}
             </div>
         </div>
     </main>

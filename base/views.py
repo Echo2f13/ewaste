@@ -101,7 +101,14 @@ def profile(request, pk):
     return render(request, "base/profile.html", {"user": user, "profile": profile})
 
 def home(request,pk):
-    return render(request, 'base/home.html')
+    current_user = pk # Get the logged-in user
+    categories = product.objects.values_list('product_category', flat=True).distinct()
+    
+    categorized_products = {
+        category: product.objects.filter(product_category=category).exclude(product_seller=current_user)
+        for category in categories
+    }
+    return render(request, 'base/home.html', {'categorized_products': categorized_products})
 
 @login_required
 def sell(request, pk):
