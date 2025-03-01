@@ -26,7 +26,7 @@ PRODUCT_CATEGORIES = [
 class userFull(models.Model):
     userFull_id = models.BigAutoField(primary_key='True', auto_created='True')
     userFull_image = models.ImageField(null='True', upload_to='user_photos/')
-    userFull_phoneNumber = models.CharField(max_length=15, unique=True, null=False)
+    userFull_phoneNumber = models.CharField(max_length=15, unique=True, null=True)
     
     # Address Fields
     userFull_street = models.CharField(max_length=255, null='True')
