@@ -7,6 +7,8 @@ from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from django.contrib import messages
 from events.models import userFull
+from django.contrib.auth import update_session_auth_hash
+from django.http import JsonResponse
 
 User = get_user_model()
 def signupForm(request):
@@ -135,22 +137,19 @@ def change_password(request):
         new_password = request.POST.get("new_password")
         confirm_password = request.POST.get("confirm_password")
 
-        if user.check_password(old_password):
-            if new_password == confirm_password:
-                user.set_password(new_password)
-                user.save()
-                
-                # Keep the user logged in after password change
-                update_session_auth_hash(request, user)
+        if not user.check_password(old_password):
+            return JsonResponse({"status": "error", "message": "Old password is incorrect!"})
 
-                messages.success(request, "Password changed successfully!")
-                return redirect("profile", pk=user.pk)
-            else:
-                messages.error(request, "New passwords do not match.")
-        else:
-            messages.error(request, "Old password is incorrect.")  
+        if new_password != confirm_password:
+            return JsonResponse({"status": "error", "message": "New passwords do not match!"})
 
-    return redirect("profile", pk=user.pk)  # Redirect back to profile page
+        user.set_password(new_password)
+        user.save()
+        update_session_auth_hash(request, user)  # Keep user logged in
+
+        return JsonResponse({"status": "success", "message": "Password changed successfully!"})
+
+    return JsonResponse({"status": "error", "message": "Invalid request!"})
 
 @login_required
 def delete_account(request):
