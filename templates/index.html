@@ -152,9 +152,40 @@
                     <div class="col-xl-7 col-lg-8">
                         <div class="section-tittle text-center mb-55">
                             <h2>Our featured courses</h2>
+                            <h3>You can only view the thumbnails of the products, Login to view the whole product, thankyou.</h3>
                         </div>
                     </div>
                 </div>
+                {% for category, products in categorized_products.items %}
+                <h1>{{ category }}</h1>
+                <div class="courses-actives">
+                    {% for product in products %}
+                    <!-- Single -->
+                    <div class="properties pb-20">
+                        <div class="properties__card">
+                            <img style="width:100%; height: 200px; border-radius: 10px 10px 0px 0px;"
+                                src="{{ product.product_image_1.url }}" alt="{{ product.product_description }}">
+                            <div class="properties__caption">
+                                <h3>{{ product.product_description }}</h3>
+                                <p style="font-size: 16px;">
+                                    <strong
+                                        style="font-size: 16px; padding-right: 15px;">{{ product.product_description }}</strong>
+                                </p>
+                                <div class="properties__footer d-flex justify-content-between align-items-center">
+                                    <div class="restaurant-name">
+                                        <p>Evaluated</p>
+                                    </div>
+                                    <div class="price">
+                                        <span>₹ {{ product.product_sell_price }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Single -->
+                    {% endfor %}
+                </div>
+                {% endfor %}
             </div>
         </div>
         </div>

@@ -1,5 +1,9 @@
+from django.utils.timezone import now
 from django.db import models
 from django.contrib.auth.models import User
+import os
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 PRODUCT_CATEGORIES = [
     ('MOB_TAB', 'Mobiles and Tablets'),
@@ -39,30 +43,80 @@ class userFull(models.Model):
     def _str_(self):
         return self.user.username
 
+def product_image_upload_path(instance, filename, index):
+    """Generate custom filename for product images"""
+    ext = filename.split('.')[-1]  # Extract file extension
+
+    if instance.pk:
+        new_filename = f"product_{instance.pk}_{index}.{ext}"
+    else:
+        new_filename = f"temp_product_{index}.{ext}"  # Temporary filename before saving
+
+    return os.path.join('product_photos/', new_filename)
+
 class product(models.Model):
-    product_id = models.BigAutoField(primary_key='True', auto_created='True')
+    product_id = models.BigAutoField(primary_key=True, auto_created=True)
     product_seller = models.ForeignKey(userFull, on_delete=models.CASCADE)
+    product_name = models.CharField(max_length=100, null=True)
     
     product_category = models.CharField(max_length=10, choices=PRODUCT_CATEGORIES, default='OTH')
     product_description = models.CharField(max_length=5000)
     
-    product_image_1 = models.ImageField(null='True', upload_to='product_photos/')
-    product_image_2 = models.ImageField(null='True', upload_to='product_photos/')
-    product_image_3 = models.ImageField(null='True', upload_to='product_photos/')
-    product_image_4 = models.ImageField(null='True', upload_to='product_photos/')
+    product_image_1 = models.ImageField(upload_to='product_photos/', null=True, blank=True)
+    product_image_2 = models.ImageField(upload_to='product_photos/', null=True, blank=True)
+    product_image_3 = models.ImageField(upload_to='product_photos/', null=True, blank=True)
+    product_image_4 = models.ImageField(upload_to='product_photos/', null=True, blank=True)
+
+    product_bought_price = models.IntegerField(null=True, default=0)
+    product_bought_date = models.DateTimeField(null=True, blank=True)
     
-    product_bought_price = models.IntegerField(null='True', default=0)
-    product_bought_date = models.DateTimeField(null='True', blank='True')
-    product_bought_date = models.DateTimeField(null='True', blank='True')
-    
-    product_evaluation_status = models.IntegerField(null='True', default=0)
-    product_evaluation_score = models.IntegerField(null='True', default=0)
+    product_evaluation_status = models.IntegerField(null=True, default=0)
+    product_evaluation_score = models.IntegerField(null=True, default=0)
     
     product_discount = models.IntegerField(default=0)
     product_sell_price = models.IntegerField(default=0)
     
     product_sold = models.IntegerField(default=0)
     product_onDelivery = models.IntegerField(default=0)
+    
+    def save(self, *args, **kwargs):
+        """
+        Override save() to rename images properly (both in DB and file system)
+        """
+        is_new = self.pk is None  # Check if this is a new object
+        super().save(*args, **kwargs)  # Save first to get pk
+
+        def rename_image(field, index):
+            """Physically rename the image file in storage"""
+            if field and hasattr(field, 'name') and field.name:
+                old_path = field.path
+                new_name = product_image_upload_path(self, field.name, index)
+                new_path = os.path.join(default_storage.location, new_name)
+
+                # Move and rename only if the file exists and is different
+                if os.path.exists(old_path) and old_path != new_path:
+                    os.rename(old_path, new_path)
+
+                field.name = new_name  # Update DB reference
+
+        updated_fields = []
+
+        if self.product_image_1:
+            rename_image(self.product_image_1, 1)
+            updated_fields.append('product_image_1')
+        if self.product_image_2:
+            rename_image(self.product_image_2, 2)
+            updated_fields.append('product_image_2')
+        if self.product_image_3:
+            rename_image(self.product_image_3, 3)
+            updated_fields.append('product_image_3')
+        if self.product_image_4:
+            rename_image(self.product_image_4, 4)
+            updated_fields.append('product_image_4')
+
+        if updated_fields:
+            super().save(update_fields=updated_fields)
+
     class Meta:
         db_table = 'Product'
     
