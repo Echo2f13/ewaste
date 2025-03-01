@@ -28,9 +28,11 @@ def signupForm(request):
 
 
         if User.objects.filter(email=email).exists():
+            print("email already exist")
             return render(request, "base/signup.html", {"message1": 1})
 
         try:
+            print("trying")
             User.objects.create_user(
                 username=username,
                 email=email,
@@ -41,6 +43,7 @@ def signupForm(request):
                 first_name=first_name,
                 last_name=last_name,
             )
+            print("created a new user")
             
             return redirect("Login")
         
