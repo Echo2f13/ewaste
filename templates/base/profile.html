@@ -4,165 +4,163 @@
 
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/img/favicon.ico' %}">
     <title>Profile</title>
-    
-    <!-- CSS here -->
+
+    <!-- CSS -->
     <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/animate.min.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/fontawesome-all.min.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/themify-icons.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
     <style>
-        .video-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: -1;
-        }
-        .video-background video {
-            width: 100vw;
-            height: 100vh;
-            object-fit: cover;
-        }
-        main {
-            position: relative;
-            z-index: 1;
-        }
-        .footer-wrappper {
-            margin-top: 100px; /* Moves the footer section lower */
-        }
-        .header-area {
-            margin-top: 45px; /* Adjust as needed */
-        }
-        .profile-card {
-            background: rgba(255, 255, 255, 0.9);
+        .profile-container {
+            display: flex;
+            max-width: 900px;
+            margin: 50px auto;
+            background: white;
             border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar {
+            width: 30%;
+            background: #343a40;
+            color: white;
             padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid gray;
+        }
+
+        .sidebar ul li:hover {
+            background: #495057;
+        }
+
+        .content {
+            width: 70%;
+            padding: 20px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .alert {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
         }
     </style>
 </head>
 
 <body>
-    <div class="video-background">
-        <video autoplay muted loop>
-            <source src="{% static 'assets/img/login-bg.mp4' %}" type="video/mp4">
-        </video>
-    </div>
-    <main class="profile-body">
-        <header>
-            <div class="header-area header-transparent">
-                <div class="main-header">
-                    <div class="header-bottom header-sticky">
-                        <div class="container-fluid">
-                            <div class="row align-items-center">
-                                <div class="col-xl-2 col-lg-2">
-                                    <div class="logo">
-                                        <h1 style="color: aliceblue;">EWMS</h1>
-                                    </div>
-                                </div>
-                                <div class="col-xl-10 col-lg-10">
-                                    <div class="menu-wrapper d-flex align-items-center justify-content-end">
-                                        <div class="main-menu d-none d-lg-block">
-                                            <nav>
-                                                <ul id="navigation">
-                                                    <li class="button-header">
-                                                        <a href="{% url 'home' user.id %}" class="btn btn3">Back</a>
-                                                    </li>
-                                                    <li class="button-header">
-                                                        <a href="{% url 'logout' %}" class="btn btn3">Log out</a>
-                                                    </li>
-                                                </ul>
-                                            </nav>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="mobile_menu d-block d-lg-none"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
+    <!-- Message Alerts -->
 
-        <section class="profile-area section-padding40 fix">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-xl-6 col-lg-7">
-                        <div class="section-tittle text-center mb-55">
-                            <h2>User Profile</h2>
-                        </div>
-                    </div>
+        <div>
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'success' %}alert alert-success{% else %}alert alert-danger{% endif %} "role="alert">
+                    {{ message }}
                 </div>
-                <div class="row justify-content-center">
-                    <div class="col-lg-6 col-md-8">
-                        <div class="profile-card p-4 text-center">
-                            <h3>{{ user.username }}</h3>
-                            <p><strong>First Name:</strong> {{ user.first_name }}</p>
-                            <p><strong>Last Name:</strong> {{ user.last_name }}</p>
-                            <p><strong>Email:</strong> {{ user.email }}</p>
-                            <p><strong>Joined:</strong> {{ user.date_joined }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
+            {% endfor %}
+        </div>
 
-    <footer>
-        <div class="footer-wrappper footer-bg">
-            <div class="footer-area footer-padding">
-                <div class="container">
-                    <div class="row justify-content-between">
-                        <div class="col-xl-4 col-lg-5 col-md-4 col-sm-6">
-                            <div class="single-footer-caption mb-50">
-                                <div class="footer-logo mb-25">
-                                    <a href="{% url 'Index' %}">
-                                        <h1 style="color: aliceblue;">E-waste</h1>
-                                    </a>
-                                </div>
-                                <div class="footer-tittle">
-                                    <p>This is a place where you can recycle electronic waste.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-6 col-lg-5 col-md-6 col-sm-6">
-                            <div class="single-footer-caption mb-50">
-                                <div class="footer-tittle">
-                                    <h4>E-Waste: A Growing Threat to Our Planet</h4>
-                                    <p>E-waste refers to discarded electronic devices. Improper disposal causes pollution and health risks. Responsible recycling is crucial for a sustainable future.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="footer-bottom-area">
-                    <div class="container">
-                        <div class="footer-border">
-                            <div class="row d-flex align-items-center">
-                                <div class="col-xl-12 ">
-                                    <div class="footer-copy-right text-center">
-                                        <p>Hope you have a great time browsing.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="profile-container">
+        <div class="sidebar">
+            <h3>Navigation</h3>
+            <ul>
+                <li onclick="showSection('profile')">Profile</li>
+                <li onclick="showSection('address')">Address</li>
+                <li onclick="showSection('change-address')">Change Address</li>
+                <li onclick="showSection('change-password')">Change Password</li>
+                <li onclick="showSection('delete-account')">Delete Account</li>
+            </ul>
+        </div>
+        <div class="content">
+            <div id="profile" class="section active">
+                <h3>Profile</h3>
+                <img src="{% static 'assets/img/profile-placeholder.png' %}" width="100" alt="Profile Picture">
+                <p><strong>First Name:</strong> {{ user.first_name }}</p>
+                <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                <p><strong>Joined:</strong> {{ user.date_joined }}</p>
+            </div>
+            <div id="address" class="section">
+                <h3>Address</h3>
+                <p>{{ profile.userFull_street|default:"None" }}, {{ profile.userFull_city|default:"None" }},
+                    {{ profile.userFull_state|default:"None" }}, {{ profile.userFull_zipcode|default:"None" }},
+                    {{ profile.userFull_country|default:"None" }}</p>
+            </div>
+            <div id="change-address" class="section">
+                <h3>Change Address</h3>
+                <form method="POST" action="{% url 'change_address' %}">
+                    {% csrf_token %}
+                    <input type="text" name="street" value="{{ profile.userFull_street }}" placeholder="Street">
+                    <input type="text" name="city" value="{{ profile.userFull_city }}" placeholder="City">
+                    <input type="text" name="state" value="{{ profile.userFull_state }}" placeholder="State">
+                    <input type="text" name="zipcode" value="{{ profile.userFull_zipcode }}" placeholder="Zipcode">
+                    <input type="text" name="country" value="{{ profile.userFull_country }}" placeholder="Country">
+                    <button type="submit">Update Address</button>
+                </form>
+            </div>
+            <div id="change-password" class="section">
+                <h3>Change Password</h3>
+                <form method="POST" action="{% url 'change_password' %}">
+                    {% csrf_token %}
+                    <input type="password" name="old_password" placeholder="Old Password">
+                    <input type="password" name="new_password" placeholder="New Password">
+                    <input type="password" name="confirm_password" placeholder="Confirm Password">
+                    <button type="submit">Change Password</button>
+                </form>
+            </div>
+            <div id="delete-account" class="section">
+                <h3>Delete Account</h3>
+                <p>Are you sure you want to delete your account?</p>
+                <form method="POST" action="{% url 'delete_account' %}">
+                    {% csrf_token %}
+                    <button type="submit">Yes, Delete</button>
+                </form>
             </div>
         </div>
-    </footer>
+    </div>
 
-    <script src="{% static 'assets/js/jquery.vide.js' %}"></script>
-    <script src="{% static 'assets/js/main.js' %}"></script>
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+    </script>
+
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        // Hide messages after 2 seconds
+        setTimeout(function () {
+            let messageContainer = document.getElementById("message-container");
+            if (messageContainer) {
+                messageContainer.style.display = "none";
+            }
+        }, 2000);
+
+    </script>
 </body>
 
 </html>

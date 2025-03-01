@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
+from django.contrib import messages
+from events.models import userFull
 
 User = get_user_model()
 def signupForm(request):
@@ -84,11 +86,79 @@ def logout_view(request):
     logout(request)
     return redirect("Login")
 
-def profile(request,pk):
-    return render(request, 'base/profile.html')
+def profile(request, pk):
+    user = request.user
+    try:
+        profile = userFull.objects.get(user=user)
+    except userFull.DoesNotExist:
+        profile = None  # Handle missing profile
+
+    return render(request, "base/profile.html", {"user": user, "profile": profile})
 
 def home(request,pk):
     return render(request, 'base/home.html')
 
 def sell(request,pk):
     return render(request, 'base/sell.html')
+from django.contrib.auth import update_session_auth_hash
+
+@login_required
+def change_address(request):
+    if request.method == "POST":
+        street = request.POST.get("street")
+        city = request.POST.get("city")
+        state = request.POST.get("state")
+        zipcode = request.POST.get("zipcode")
+        country = request.POST.get("country")
+
+        profile, _ = userFull.objects.update_or_create(
+            user=request.user,
+            defaults={
+                "userFull_street": street,
+                "userFull_city": city,
+                "userFull_state": state,
+                "userFull_zipcode": zipcode,
+                "userFull_country": country,
+            },
+        )
+
+        messages.success(request, "Address updated successfully!")
+        return redirect("profile", pk=request.user.pk)  # Ensure profile URL takes `pk`
+
+    return redirect("profile", pk=request.user.pk)  # No separate page, go to profile
+
+@login_required
+def change_password(request):
+    user = request.user
+    if request.method == "POST":
+        old_password = request.POST.get("old_password")
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if user.check_password(old_password):
+            if new_password == confirm_password:
+                user.set_password(new_password)
+                user.save()
+                
+                # Keep the user logged in after password change
+                update_session_auth_hash(request, user)
+
+                messages.success(request, "Password changed successfully!")
+                return redirect("profile", pk=user.pk)
+            else:
+                messages.error(request, "New passwords do not match.")
+        else:
+            messages.error(request, "Old password is incorrect.")  
+
+    return redirect("profile", pk=user.pk)  # Redirect back to profile page
+
+@login_required
+def delete_account(request):
+    if request.method == "POST":
+        user = request.user
+        logout(request)
+        user.delete()
+        messages.success(request, "Account deleted successfully!")
+        return redirect("Index")  # Ensure 'home' is a valid URL
+
+    return redirect("profile", pk=request.user.pk)  # Redirect to profile if not POST
