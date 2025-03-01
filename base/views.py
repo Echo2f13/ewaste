@@ -6,15 +6,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from django.contrib import messages
-<<<<<<< HEAD
-from events.models import userFull
-from django.contrib.auth import update_session_auth_hash
 from django.http import JsonResponse
-=======
 from events.models import userFull, product, PRODUCT_CATEGORIES
 from django.contrib.auth import update_session_auth_hash
-
->>>>>>> 1dfd2e03232614429cb0d7c0e1b9d7907037bdcc
 
 User = get_user_model()
 def signupForm(request):
