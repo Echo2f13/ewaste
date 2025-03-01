@@ -1,14 +1,15 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Start up</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/img/favicon.ico' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/img/favicon.ico' %}  ">
+
     <!-- CSS here -->
     <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/owl.carousel.min.css' %}">
@@ -24,11 +25,9 @@
     <link rel="stylesheet" href="{% static 'assets/css/slick.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/nice-select.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
-    <title>User Login</title>
 </head>
 
 <body>
-    <!-- ? Preloader Start -->
     <div id="preloader-active">
         <div class="preloader d-flex align-items-center justify-content-center">
             <div class="preloader-inner position-relative">
@@ -39,39 +38,189 @@
             </div>
         </div>
     </div>
-    <!-- Preloader Start-->
-    <!-- Register -->
-    <main class="login-body" data-vide-bg="{% static 'assets/img/login-bg.mp4' %}">
-        <form class="form-default" action="#" method="POST">
-        
-        <div class=" login-form">
+    <header>
+        <!-- Header Start -->
+        <div class="header-area header-transparent">
+            <div class="main-header ">
+                <div class="header-bottom  header-sticky">
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                            <!-- Logo -->
+                            <div class="col-xl-2 col-lg-2">
+                                <div class="logo">
+                                    <h1 style="color: aliceblue;">EWMS</h1>
+                                </div>
+                            </div>
+                            <div class="col-xl-10 col-lg-10">
+                                <div class="menu-wrapper d-flex align-items-center justify-content-end">
+                                    <!-- Main-menu -->
+                                    <div class="main-menu d-none d-lg-block">
+                                        <nav>
+                                            <ul id="navigation">
+                                                <li class="active"><a href="#"></a></li>
+                                                </li>
+                                                <li class="dropdown">
+                                                    <img src="{% static 'assets/img/post/post_4.png' %}"
+                                                        alt="{% static 'assets/img/post/post_4.png' %}"
+                                                        class="profile-icon"> <span class="menu-dots">⫶</span>
+                                                    <ul style="margin=0px; padding=0px;" class="dropdown-menu">
+                                                        <li style="margin=0px; padding=0px;"><a
+                                                                href="{% url 'profile' user.id %} "
+                                                                class="btn btn3">Profile</a></li>
+                                                        <li style="margin=0px; padding=0px;"><a
+                                                                href="{% url 'logout' %}" class="btn btn3">Log out</a>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
 
-            <h2>User Login</h2>
+                            <!-- Mobile Menu -->
+                            <div class="col-12">
+                                <div class="mobile_menu d-block d-lg-none"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Header End -->
+    </header>
 
-            {% csrf_token %}
-            <div class="form-input">
-                <p style="color: rgb(193, 255, 127);">{{ logged_out }}</p>
-                <p style="color: rgb(255, 127, 127);">{{ incorrect }}</p>
-                <p style="color: rgb(255, 127, 127);">{{ integrityerror }}</p>
-                <p style="color: rgb(255, 127, 127);">{{ error }}</p>
+    <main>
+        <!--? slider Area Start-->
+        <section class="slider-area ">
+            <div class="slider-active">
+                <!-- Single Slider -->
+                <div class="slider-height d-flex align-items-center">
+                </div>
             </div>
-            <div class="form-input">
-                <label for="email">email</label>
-                <input type="email" placeholder="email@xyz.com" name="email" required>
-            </div>
-            <div class="form-input">
-                <label for="password">Password</label>
-                <input type="password" placeholder="Password" name="password">
-            </div>
-            <div class="form-input">
-                <input type="submit" name="Login" value="Login">
-            </div>
+        </section>
+        <div class="courses-area section-padding40 fix">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-7 col-lg-8">
+                        <div class="section-tittle text-center mb-55">
+                            <h2>Add you Item here</h2>
+                        </div>
+                    </div>
+                </div>
+                <h2>Here</h2>
+                <div class="courses-actives">
+                    <form method="POST" action="{% url 'sell' seller.pk %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                    
+                        <label>Upload Images:</label>
+                        <input type="file" name="product_image_1" accept="image/*">
+                        <input type="file" name="product_image_2" accept="image/*">
+                        <input type="file" name="product_image_3" accept="image/*">
+                        <input type="file" name="product_image_4" accept="image/*">
+                    
+                        <label>Category:</label><br>
+                        <select name="product_category" required>
+                            {% for code, name in product_categories %}
+                            <option value="{{ code }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                        <br>
+                    
+                        <label>Description:</label><br>
+                        <textarea name="product_description" rows="4" required></textarea>
+                        <br>
+                    
+                        <label>Bought Price:</label><br>
+                        <input type="number" name="product_bought_price" required min="0">
+                        <br>
+                    
+                        <label>Bought Date:</label><br>
+                        <input type="datetime-local" name="product_bought_date">
+                        <br>
+                    
+                        <label>Discount (%):</label><br>
+                        <input type="number" name="product_discount" min="0" max="100" value="0" required>
+                        <br>
+                    
+                        <label>Sell Price:</label><br>
+                        <input type="number" name="product_sell_price" required min="1">
+                        <br><br>
+                    
+                        <button type="submit">Add Product</button>
+                    </form>
 
-            {% comment %} <a href="{% url 'forgot_pass_to_mail' %}" class="registration">forgot passowrd</a> {% endcomment %}
-        </form>
-        <!-- /end login form -->
+                </div>
+            </div>
+        </div>
     </main>
+    <footer>
+        <div class="footer-wrappper footer-bg">
+            <!-- Footer Start-->
+            <div class="footer-area footer-padding">
+                <div class="container">
+                    <div class="row justify-content-between">
+                        <div class="col-xl-4 col-lg-5 col-md-4 col-sm-6">
+                            <div class="single-footer-caption mb-50">
+                                <div class="single-footer-caption mb-30">
+                                    <!-- logo -->
+                                    <div class="footer-logo mb-25">
+                                        <a href="{% url 'Index' %}">
+                                            <h1 style="color: aliceblue;">E-waste</h1>
+                                        </a>
+                                    </div>
+                                    <div class="footer-tittle">
+                                        <div class="footer-pera">
+                                            <p>This is place where you can recycle electronic waste.</p>
+                                        </div>
+                                    </div>
 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-5 col-md-6 col-sm-6">
+                            <div class="single-footer-caption mb-50">
+                                <div class="footer-tittle">
+                                    <h4>E-Waste: A Growing Threat to Our Planet</h4>
+                                    <p>
+                                        E-waste refers to discarded electronic devices like smartphones, laptops,
+                                        televisions, and batteries. Rapid technological advancements lead to a surge in
+                                        outdated gadgets, contributing to e-waste. Many of these devices contain toxic
+                                        materials such as lead, mercury, and cadmium, which harm the environment and
+                                        human health. Improper disposal causes soil, air, and water pollution,
+                                        increasing risks of lung diseases, brain damage, and skin disorders.Workers in
+                                        informal recycling sectors, particularly in developing countries, are most
+                                        affected due to unsafe dismantling practices</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- footer-bottom area -->
+                <div class="footer-bottom-area">
+                    <div class="container">
+                        <div class="footer-border">
+                            <div class="row d-flex align-items-center">
+                                <div class="col-xl-12 ">
+                                    <div class="footer-copy-right text-center">
+                                        <p>Hope you have great time browsing.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer End-->
+        </div>
+    </footer>
+
+    <!-- Scroll Up -->
+    <div id="back-top">
+        <a title="Go to Top" href="#"> <i class="fas fa-level-up-alt"></i></a>
+    </div>
+
+    <!-- JS here -->
     <script src="{% static './assets/js/vendor/modernizr-3.5.0.min.js' %}"></script>
     <!-- Jquery, Popper, Bootstrap -->
     <script src="{% static './assets/js/vendor/jquery-1.12.4.min.js' %}"></script>
@@ -79,9 +228,6 @@
     <script src="{% static './assets/js/bootstrap.min.js' %}"></script>
     <!-- Jquery Mobile Menu -->
     <script src="{% static './assets/js/jquery.slicknav.min.js' %}"></script>
-
-    <!-- Video bg -->
-    <script src="{% static './assets/js/jquery.vide.js' %}"></script>
 
     <!-- Jquery Slick , Owl-Carousel Plugins -->
     <script src="{% static './assets/js/owl.carousel.min.js' %}"></script>

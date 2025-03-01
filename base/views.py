@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db import IntegrityError
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -6,7 +6,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from django.contrib import messages
-from events.models import userFull
+from events.models import userFull, product, PRODUCT_CATEGORIES
+from django.contrib.auth import update_session_auth_hash
+
 
 User = get_user_model()
 def signupForm(request):
@@ -98,9 +100,52 @@ def profile(request, pk):
 def home(request,pk):
     return render(request, 'base/home.html')
 
-def sell(request,pk):
-    return render(request, 'base/sell.html')
-from django.contrib.auth import update_session_auth_hash
+@login_required
+def sell(request, pk):
+    seller = get_object_or_404(userFull, pk=pk)  # Fetch seller by pk
+    print("Got into sell view - Method:", request.method)
+
+    if request.method == "POST":
+        print("Form submitted - POST data:", request.POST)
+        print("FILES data:", request.FILES)
+
+        product_category = request.POST.get("product_category")
+        product_description = request.POST.get("product_description")
+        product_bought_price = request.POST.get("product_bought_price", 0)
+        product_bought_date = request.POST.get("product_bought_date", None)
+        product_discount = request.POST.get("product_discount", 0)
+        product_sell_price = request.POST.get("product_sell_price", 0)
+
+        # Handling images
+        product_image_1 = request.FILES.get("product_image_1")
+        product_image_2 = request.FILES.get("product_image_2")
+        product_image_3 = request.FILES.get("product_image_3")
+        product_image_4 = request.FILES.get("product_image_4")
+
+        print(f"Image1: {product_image_1}, Discount: {product_discount}")
+
+        # Create product instance
+        new_product = product.objects.create(
+            product_seller=seller,
+            product_category=product_category,
+            product_description=product_description,
+            product_bought_price=int(product_bought_price),
+            product_bought_date=product_bought_date,
+            product_discount=int(product_discount),
+            product_sell_price=int(product_sell_price),
+            product_image_1=product_image_1,
+            product_image_2=product_image_2,
+            product_image_3=product_image_3,
+            product_image_4=product_image_4,
+        )
+
+        print("Product successfully created:", new_product)
+        messages.success(request, "Product added successfully!")
+
+        return redirect("home", pk=request.user.pk)  # Redirect to home page
+
+    print("Work not done - rendering sell page")
+    return render(request, "base/sell.html", {"seller": seller, "product_categories": PRODUCT_CATEGORIES})
 
 @login_required
 def change_address(request):
