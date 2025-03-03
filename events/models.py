@@ -160,3 +160,17 @@ class evaluatorJob(models.Model):
     evaluatorJob_product = models.ForeignKey(product, on_delete=models.CASCADE)
     evaluatorJob_seller = models.ForeignKey(userFull, on_delete=models.CASCADE)
     evaluatorJob_status = models.IntegerField(default=0)
+    
+    
+class Cart(models.Model):
+    cart_id = models.BigAutoField(primary_key=True, auto_created=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart')
+    product = models.ForeignKey(product, on_delete=models.CASCADE)
+    added_at = models.DateTimeField(default=now)
+
+    class Meta:
+        db_table = 'Cart'
+        unique_together = ('user', 'product')  # Ensures no duplicate entries for the same user-product pair
+
+    def __str__(self):
+        return f"{self.user.username} - {self.product.product_name} (x{self.quantity})"

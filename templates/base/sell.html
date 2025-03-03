@@ -118,14 +118,18 @@
                         <input type="file" name="product_image_2" accept="image/*">
                         <input type="file" name="product_image_3" accept="image/*">
                         <input type="file" name="product_image_4" accept="image/*">
-                    
+                        <br>
                         <label>Category:</label><br>
                         <select name="product_category" required>
                             {% for code, name in product_categories %}
                             <option value="{{ code }}">{{ name }}</option>
                             {% endfor %}
                         </select>
-                        <br>
+                        <br><br>
+                    
+                        <label>Sell name:</label> <br>
+                        <input type="text" name="product_name" required>
+                        <br><br>
                     
                         <label>Description:</label><br>
                         <textarea name="product_description" rows="4" required></textarea>

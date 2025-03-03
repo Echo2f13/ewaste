@@ -101,18 +101,20 @@ def profile(request, pk):
     return render(request, "base/profile.html", {"user": user, "profile": profile})
 
 def home(request,pk):
-    current_user = pk # Get the logged-in user
+    current_userFull = userFull.objects.get(user=pk)
     categories = product.objects.values_list('product_category', flat=True).distinct()
     
     categorized_products = {
-        category: product.objects.filter(product_category=category).exclude(product_seller=current_user)
+        category: product.objects.filter(product_category=category).exclude(product_seller=current_userFull)
         for category in categories
     }
-    return render(request, 'base/home.html', {'categorized_products': categorized_products})
+    user_products = product.objects.filter(product_seller=current_userFull)
+
+    return render(request, 'base/home.html', {'categorized_products': categorized_products, 'user_products' :  user_products})
 
 @login_required
 def sell(request, pk):
-    seller = get_object_or_404(userFull, pk=pk)  # Fetch seller by pk
+    seller = get_object_or_404(userFull, user = pk)  # Fetch seller by pk
     print("Got into sell view - Method:", request.method)
 
     if request.method == "POST":
@@ -120,6 +122,7 @@ def sell(request, pk):
         print("FILES data:", request.FILES)
 
         product_category = request.POST.get("product_category")
+        product_name = request.POST.get("product_name")
         product_description = request.POST.get("product_description")
         product_bought_price = request.POST.get("product_bought_price", 0)
         product_bought_date = request.POST.get("product_bought_date", None)
@@ -138,6 +141,7 @@ def sell(request, pk):
         new_product = product.objects.create(
             product_seller=seller,
             product_category=product_category,
+            product_name=product_name,
             product_description=product_description,
             product_bought_price=int(product_bought_price),
             product_bought_date=product_bought_date,
@@ -156,6 +160,12 @@ def sell(request, pk):
 
     print("Work not done - rendering sell page")
     return render(request, "base/sell.html", {"seller": seller, "product_categories": PRODUCT_CATEGORIES})
+
+def product_detail(request, pk, pk2):
+    current_userFull = userFull.objects.get(user=pk)
+    product_obj = get_object_or_404(product, product_id=pk2)
+    return render(request, 'base/product_detail.html', {'product': product_obj, 'user': current_userFull.user})
+
 
 @login_required
 def change_address(request):

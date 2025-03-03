@@ -100,12 +100,21 @@
                         <div class="row">
                             <div class="col-xl-6 col-lg-7 col-md-12">
                                 <div class="hero__caption">
-                                    <h1 data-animation="fadeInLeft" data-delay="0.2s">Online learning<br> platform</h1>
-                                    <p data-animation="fadeInLeft" data-delay="0.4s">Build skills with courses,
-                                        certificates, and degrees
-                                        online from world-class universities and companies</p>
+                                    <h1 data-animation="fadeInLeft" data-delay="0.2s">Electronic recycle<br> platform</h1>
+                                    <p data-animation="fadeInLeft" data-delay="0.4s">Rapid technological advancements lead to a surge in
+                                        outdated gadgets, contributing to e-waste.</p>
                                     <a href="{% url 'sell' user.id %}" class="btn hero-btn" data-animation="fadeInLeft"
-                                        data-delay="0.7s">Sell</a>
+                                        data-delay="0.7s">Sell</a> &nbsp;&nbsp; &nbsp;
+                                    <a href="#selling_products" data-toggle="modal" class="btn hero-btn"
+                                        data-animation="fadeInLeft" data-delay="0.7s">View
+                                        selling products</a>
+                                    <br>
+                                    <br>
+                                    <br>
+                                    <p>View the products you bought here</p>
+                                    <a href="#order_history" data-toggle="modal"  class="btn hero-btn" data-animation="fadeInLeft" data-delay="0.7s">your
+                                        orders History</a> &nbsp;&nbsp; &nbsp;
+                                    <a href="#user_cart" data-toggle="modal" class="btn hero-btn" data-animation="fadeInLeft" data-delay="0.7s">Cart</a>
                                 </div>
                             </div>
                         </div>
@@ -133,10 +142,9 @@
                             <img style="width:100%; height: 200px; border-radius: 10px 10px 0px 0px;"
                                 src="{{ product.product_image_1.url }}" alt="{{ product.product_description }}">
                             <div class="properties__caption">
-                                <h3>{{ product.product_description }}</h3>
+                                <h3>{{ product.product_name }}</h3>
                                 <p style="font-size: 16px;">
-                                    <strong
-                                        style="font-size: 16px; padding-right: 15px;">{{ product.product_description }}</strong>
+                                    <strong style="font-size: 16px; padding-right: 15px;">{{ product.product_description }}</strong>
                                 </p>
                                 <div class="properties__footer d-flex justify-content-between align-items-center">
                                     <div class="restaurant-name">
@@ -146,9 +154,8 @@
                                         <span>₹ {{ product.product_sell_price }}</span>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#">
-                                    Find out more
-                                </button>
+                                <a href="{% url 'product_detail' user.id product.product_id %}"  class="btn hero-btn"
+                                        data-animation="fadeInLeft" data-delay="0.7s">Find out more</a>
                             </div>
                         </div>
                     </div>
@@ -159,6 +166,109 @@
                 {% endfor %}
             </div>
         </div>
+        <!-- Modal -->
+        <div class="modal fade" id="selling_products" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle"><b style="font-size: 22px;">Your Selling
+                                Products</b></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        {% if user_products %}
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Condition</th>
+                                    <th>Evaluated</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in user_products %}
+                                <tr>
+                                    <td>
+                                        <img src="{{ product.product_image_1.url }}" alt="Product Image" width="80px"
+                                            height="80px" class="img-thumbnail">
+                                    </td>
+                                    <td>{{ product.product_name }}</td>
+                                    <td>{{ product.product_description }}</td>
+                                    <td>
+                                        {% if product.product_sold %}
+                                        <span class="badge badge-success">sold</span>
+                                        {% else %}
+                                        <span class="badge badge-warning">not sold yet</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if product.product_evaluation_status %}
+                                        <span class="badge badge-success">Not Evaluated</span>
+                                        {% else %}
+                                        <span class="badge badge-warning">Evaluated</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <p>No products found.</p>
+                        {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="user_cart" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle"><b style="font-size: 22px;">Your Cart</b></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Your Cart is coming soon</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="order_history" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle"><b style="font-size: 22px;">Your Cart</b></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Your Order history is coming soon is coming soon</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </main>
     <footer>
         <div class="footer-wrappper footer-bg">

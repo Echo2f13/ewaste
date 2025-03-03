@@ -10,6 +10,7 @@ urlpatterns = [
     path('profile/<int:pk>', views.profile, name='profile'),
     path('home/<int:pk>', views.home, name='home'),
     path('sell/<int:pk>', views.sell, name='sell'),
+    path('product/<int:pk>/<int:pk2>/', views.product_detail, name='product_detail'),
 
     path('profile/<int:pk>/', views.profile, name='profile'),
     path('change_address/', views.change_address, name='change_address'),
