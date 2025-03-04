@@ -76,6 +76,11 @@
                     <label for="name">Email Address</label>
                     <input type="email" placeholder="email" name="email">
                 </div>
+                
+                <div class="form-input">
+                    <label for="phone_number">Phone Number</label>
+                    <input type="text" placeholder="phone number" name="phone_number">
+                </div>
                 <div class="form-input">
                     <label for="name">Password</label>
                     <input type="password" placeholder="password" name="password">
@@ -83,9 +88,9 @@
                 <div class="form-input pt-30">
                     <input type="submit" name="submit">
                 </div>
+            </form>
                 <a href="{% url 'loginForm' %}" class="registration">login</a>
             </div>
-        </form>
         <!-- /end login form -->
     </main>
 

@@ -2,7 +2,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Profile</title>
@@ -89,7 +91,7 @@
         .danger-btn {
             background-color: #454646;
             color: white;
-            font-style: bold ;
+            font-style: bold;
         }
 
         .primary-btn:hover {
@@ -97,7 +99,7 @@
         }
 
         .secondary-btn:hover {
-            background-color: #5a6268;
+            background-color: #0c6e42;
         }
 
         .danger-btn:hover {
@@ -128,10 +130,30 @@
             flex-direction: column;
             align-items: center;
         }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #454646;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        .back-button:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
     </style>
 </head>
 
 <body>
+
+    <a href="{% url 'home' user.pk %}" class="back-button">← Home</a>
+
     <video class="video-bg" autoplay loop muted>
         <source src="{% static 'assets/img/login-bg.mp4' %}" type="video/mp4">
     </video>
@@ -139,23 +161,69 @@
     <div class="profile-container">
         <div class="sidebar-menu">
             <button onclick="showSection('profile-section')" class="action-button primary-btn">Profile</button>
-            <button onclick="showSection('change-address')" class="action-button secondary-btn">Change Address</button>
-            <button onclick="showSection('change-password')" class="action-button secondary-btn">Change Password</button>
+            <button onclick="showSection('edit-profile')" class="action-button primary-btn">Edit Profile</button>
+            <button onclick="showSection('change-address')" class="action-button secondary-btn">Change
+                Address</button>
+            <button onclick="showSection('change-password')" class="action-button secondary-btn">Change
+                Password</button>
             <button onclick="showSection('delete-account')" class="action-button danger-btn">Delete Account</button>
         </div>
 
         <div class="content-area">
             <div id="profile-section">
                 <h3>Profile</h3>
-                <img src="{% static 'assets/img/profile-placeholder.png' %}" width="120">
+
+                <!-- ✅ Check if profile image exists, otherwise use placeholder -->
+                {% load static %}
+
+                {% if profile.userFull_image %}
+                <img src="{{ profile.userFull_image.url }}" width="120" alt="Profile Image">
+                {% else %}
+                <img src="{{ MEDIA_URL }}users/default.png" width="120" alt="Default Profile">
+                {% endif %}
+
+
                 <p style="color: aliceblue;"><strong>First Name:</strong> {{ user.first_name }}</p>
                 <p style="color: aliceblue;"><strong>Last Name:</strong> {{ user.last_name }}</p>
                 <p style="color: aliceblue;"><strong>Username:</strong> {{ user.username }}</p>
+                <p style="color: aliceblue;"><strong>Phone Number:</strong> {{ profile.userFull_phoneNumber }}</p>
+
                 <h3>Address</h3>
-                <p style="color: aliceblue;">{{ profile.userFull_street|default:"None" }}
-                    {{ profile.userFull_city|default:"None" }}, {{ profile.userFull_state|default:"None" }}
-                    {{ profile.userFull_zipcode|default:"None" }}, {{ profile.userFull_country|default:"None" }}</p>
+                <p style="color: aliceblue;">
+                    {{ profile.userFull_street|default:"None" }}
+                    {{ profile.userFull_city|default:"None" }},
+                    {{ profile.userFull_state|default:"None" }}
+                    {{ profile.userFull_zipcode|default:"None" }},
+                    {{ profile.userFull_country|default:"None" }}
+                </p>
+
             </div>
+
+            <div id="edit-profile" style="display: none;">
+                <h3>Edit Profile</h3>
+                <form method="POST" action="{% url 'edit_profile' %}" enctype="multipart/form-data" class="form-style">
+                    {% csrf_token %}
+
+                    <input type="text" name="first_name" placeholder="First Name" value="{{ user.first_name }}"
+                        required>
+                    <input type="text" name="last_name" placeholder="Last Name" value="{{ user.last_name }}" required>
+                    <input type="text" name="username" placeholder="Username" value="{{ user.username }}" required>
+                    <input type="text" name="phone_number" placeholder="Phone Number"
+                        value="{{ profile.userFull_phoneNumber|default:'' }}" required>
+
+                    <!-- ✅ Show Current Profile Image if Exists -->
+                    {% if profile.userFull_image %}
+                    <img src="{{ profile.userFull_image.url }}" alt="Profile Image"
+                        style="width: 100px; height: 100px; border-radius: 50%;">
+                    {% endif %}
+
+                    <label style="color: white;">Upload Profile Image:</label>
+                    <input type="file" name="userFull_image" accept="image/*">
+
+                    <button type="submit" class="action-button primary-btn">Update Profile</button>
+                </form>
+            </div>
+
 
             <div id="change-address" style="display: none;">
                 <h3>Change Address</h3>
@@ -209,7 +277,8 @@
 
             <div id="delete-account" style="display: none;">
                 <h3>Delete Account</h3>
-                <p style="color: aliceblue;">Are you sure you want to delete your account? This action cannot be undone.</p>
+                <p style="color: aliceblue;">Are you sure you want to delete your account? This action cannot be
+                    undone.</p>
                 <form method="POST" action="{% url 'delete_account' %}">
                     {% csrf_token %}
                     <button type="submit" class="action-button danger-btn">Delete My Account</button>

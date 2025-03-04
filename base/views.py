@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from django.contrib import messages
 from django.http import JsonResponse
-from events.models import userFull, product, cart, PRODUCT_CATEGORIES
+from events.models import userFull, product, cart, PRODUCT_CATEGORIES, userFull
 from django.contrib.auth import update_session_auth_hash
 from django.views.decorators.csrf import csrf_exempt
 
@@ -19,23 +19,25 @@ def signupForm(request):
         return redirect("Login")  
 
     if request.method == "POST":
+        
         first_name = request.POST.get("first_name")
         last_name = request.POST.get("last_name")
         username = request.POST.get("username")
         email = request.POST.get("email")
+        phone_number = request.POST.get("phone_number")
         password = request.POST.get("password")
 
-        print("first_name, last_name, username, email, password")  
-        print(first_name, last_name, username, email, password)  
-
+        print("first_name, last_name, username, email, password, phone_number")  
+        print(first_name, last_name, username, email, password, phone_number)  
 
         if User.objects.filter(email=email).exists():
-            print("email already exist")
+            print("email already exists")
             return render(request, "base/signup.html", {"message1": 1})
 
         try:
             print("trying")
-            User.objects.create_user(
+
+            new_user = User.objects.create_user(
                 username=username,
                 email=email,
                 password=password,
@@ -45,7 +47,15 @@ def signupForm(request):
                 first_name=first_name,
                 last_name=last_name,
             )
-            print("created a new user")
+
+            # ✅ Create or get userFull profile
+            new_user_full, created = userFull.objects.get_or_create(
+                user=new_user, defaults={"userFull_phoneNumber": phone_number}
+            )
+            if created:
+                print("✅ userFull profile created successfully!")
+            else:
+                print("⚠️ userFull profile already existed!")
             
             return redirect("Login")
         
@@ -94,26 +104,40 @@ def logout_view(request):
     return redirect("Login")
 
 def profile(request, pk):
-    user = request.user
+    # Get the user using the pk
+    user = get_object_or_404(User, pk=pk)
+
+    # Try to get the profile related to the user
     try:
         profile = userFull.objects.get(user=user)
     except userFull.DoesNotExist:
-        profile = None  # Handle missing profile
+        profile = None  # Handle missing profile gracefully
 
     return render(request, "base/profile.html", {"user": user, "profile": profile})
 
-def home(request,pk):
-    current_userFull = userFull.objects.get(user=pk)
+def home(request, pk):
+    try:
+        current_userFull = userFull.objects.get(user=pk)
+    except userFull.DoesNotExist:
+        current_userFull = None  # Set to None if the userFull entry is missing
+
     categories = product.objects.values_list('product_category', flat=True).distinct()
     
     categorized_products = {
-        category : product.objects.filter(product_category=category).exclude(product_seller=current_userFull).exclude(product_sold=True)
-        # category: product.objects.filter(product_category=category).exclude(product_seller=current_userFull,product_sold=True)
+        category: product.objects.filter(product_category=category)
+        .exclude(product_seller=current_userFull)
+        .exclude(product_sold=True)
         for category in categories
-    }
-    user_products = product.objects.filter(product_seller=current_userFull)
+    } if current_userFull else {}  # Avoid filtering if userFull is missing
 
-    return render(request, 'base/home.html', {'categorized_products': categorized_products, 'user_products' :  user_products})
+    user_products = product.objects.filter(product_seller=current_userFull) if current_userFull else []
+
+    return render(request, 'base/home.html', {
+        'categorized_products': categorized_products,
+        'user_products': user_products,
+        'current_userFull': current_userFull
+    })
+
 
 @login_required
 def sell(request, pk):
@@ -241,3 +265,27 @@ def delete_account(request):
         return redirect("Index")  # Ensure 'home' is a valid URL
 
     return redirect("profile", pk=request.user.pk)  # Redirect to profile if not POST
+ # Import userFull model
+
+@login_required
+def edit_profile(request):
+    user = request.user
+    profile, _ = userFull.objects.get_or_create(user=user)  # Fetch profile safely
+
+    if request.method == 'POST':
+        user.first_name = request.POST.get('first_name', user.first_name)
+        user.last_name = request.POST.get('last_name', user.last_name)
+        user.username = request.POST.get('username', user.username)
+        profile.userFull_phoneNumber = request.POST.get('phone_number', profile.userFull_phoneNumber)
+
+        # ✅ Profile Image Upload Handling
+        uploaded_image = request.FILES.get('userFull_image')
+        if uploaded_image:
+            profile.userFull_image = uploaded_image
+
+        user.save()
+        profile.save()
+
+        return redirect('profile',pk=user.id)  # Ensure 'profile' is the correct URL
+
+    return render(request, 'profile.html', {'user': user, 'profile': profile})

@@ -24,17 +24,21 @@ PRODUCT_CATEGORIES = [
 ]
 
 class userFull(models.Model):
-    userFull_id = models.BigAutoField(primary_key='True', auto_created='True')
-    userFull_image = models.ImageField(null='True', upload_to='user_photos/')
+    userFull_id = models.BigAutoField(primary_key=True, auto_created=True)
+    userFull_image = models.ImageField(
+        null=True, blank=True, 
+        upload_to='user_photos/', 
+        default='user_photos/default.png'  # Set default placeholder
+    )
     userFull_phoneNumber = models.CharField(max_length=15, unique=True, null=True)
-    
+
     # Address Fields
-    userFull_street = models.CharField(max_length=255, null='True')
-    userFull_city = models.CharField(max_length=100, null='True')
-    userFull_state = models.CharField(max_length=100, null='True')
-    userFull_zipcode = models.CharField(max_length=20, null='True')
-    userFull_country = models.CharField(max_length=100, null='True')
-    
+    userFull_street = models.CharField(max_length=255, null=True, blank=True)
+    userFull_city = models.CharField(max_length=100, null=True, blank=True)
+    userFull_state = models.CharField(max_length=100, null=True, blank=True)
+    userFull_zipcode = models.CharField(max_length=20, null=True, blank=True)
+    userFull_country = models.CharField(max_length=100, null=True, blank=True)
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userFull')
 
     class Meta:
