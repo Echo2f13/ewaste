@@ -41,7 +41,7 @@
                         <span class="divider"></span>
                         <div class="product-btn-group">
                             <div class="button buy-now"><i class='bx bxs-zap'></i> Buy Now</div>
-                            <div class="button add-cart"><i class='bx bxs-cart'></i> Add to Cart</div>
+                            <a href="{% url 'add_to_cart' user.id product.product_id %}"><div class="button add-cart"><i class='bx bxs-cart'></i> Add to Cart</div></a>
                             <a href="{% url 'home' user.id %}">
                                 <div class="button"><i class='bx'></i> go Back</div>
                             </a>

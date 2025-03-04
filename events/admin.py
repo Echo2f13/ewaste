@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     userFull, product, deliveryGuy, evaluatorGuy, 
-    userCredits, deliveryJob, evaluatorJob
+    userCredits, deliveryJob, evaluatorJob, cart
 )
 
 # Registering all models
@@ -12,3 +12,4 @@ admin.site.register(evaluatorGuy)
 admin.site.register(userCredits)
 admin.site.register(deliveryJob)
 admin.site.register(evaluatorJob)
+admin.site.register(cart)

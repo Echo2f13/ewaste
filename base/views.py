@@ -7,8 +7,10 @@ from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from django.contrib import messages
 from django.http import JsonResponse
-from events.models import userFull, product, PRODUCT_CATEGORIES
+from events.models import userFull, product, cart, PRODUCT_CATEGORIES
 from django.contrib.auth import update_session_auth_hash
+from django.views.decorators.csrf import csrf_exempt
+
 
 User = get_user_model()
 def signupForm(request):
@@ -105,7 +107,8 @@ def home(request,pk):
     categories = product.objects.values_list('product_category', flat=True).distinct()
     
     categorized_products = {
-        category: product.objects.filter(product_category=category).exclude(product_seller=current_userFull)
+        category : product.objects.filter(product_category=category).exclude(product_seller=current_userFull).exclude(product_sold=True)
+        # category: product.objects.filter(product_category=category).exclude(product_seller=current_userFull,product_sold=True)
         for category in categories
     }
     user_products = product.objects.filter(product_seller=current_userFull)
@@ -165,6 +168,20 @@ def product_detail(request, pk, pk2):
     current_userFull = userFull.objects.get(user=pk)
     product_obj = get_object_or_404(product, product_id=pk2)
     return render(request, 'base/product_detail.html', {'product': product_obj, 'user': current_userFull.user})
+
+@login_required
+def add_to_cart(request, pk, pk2):
+    current_user = User.objects.get(id=pk)
+    product_obj = get_object_or_404(product, product_id=pk2)
+
+    cart_item, created = cart.objects.get_or_create(user=current_user, product=product_obj)
+
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+    product_obj.product_sold = True
+    product_obj.save()
+    return redirect("home", pk=pk)
 
 
 @login_required
