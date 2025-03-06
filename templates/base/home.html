@@ -26,7 +26,24 @@
     <link rel="stylesheet" href="{% static 'assets/css/nice-select.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
 </head>
+<style>
+    .buy-credits-btn {
+    background: linear-gradient(45deg, #ff7e5f, #feb47b); /* Gradient effect */
+    color: white;
+    font-weight: bold;
+    border-radius: 25px;
+    padding: 10px 20px;
+    text-align: center;
+    display: inline-block;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+}
+.buy-credits-btn:hover {
+    transform: scale(1.05); /* Slight zoom effect */
+    box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.3);
+}
 
+</style>
 <body>
     <div id="preloader-active">
         <div class="preloader d-flex align-items-center justify-content-center">
@@ -59,6 +76,20 @@
                                             <ul id="navigation">
                                                 <li class="active"><a href="#"></a></li>
                                                 </li>
+                                                <li class="nav-item dropdown">
+                                                    <a class="nav-link dropdown-toggle" href="#" id="creditsDropdown"
+                                                        role="button" data-toggle="dropdown" aria-haspopup="true"
+                                                        aria-expanded="false">
+                                                        Credits:₹<span id="creditBalance">{{ user_credits.Credits }}</span>
+                                                    </a>
+                                                    <div class="dropdown-menu" aria-labelledby="creditsDropdown">
+                                                        <a class="dropdown-item btn btn-success text-white fw-bold rounded-pill shadow-sm px-4" 
+                                                           href="#" data-toggle="modal" data-target="#creditsModal">
+                                                            💰 Buy Credits
+                                                        </a>
+                                                    </div>
+                                                </li>
+
                                                 <li class="dropdown">
                                                     <img src="{% static 'assets/img/post/post_4.png' %}"
                                                         alt="{% static 'assets/img/post/post_4.png' %}"
@@ -100,8 +131,10 @@
                         <div class="row">
                             <div class="col-xl-6 col-lg-7 col-md-12">
                                 <div class="hero__caption">
-                                    <h1 data-animation="fadeInLeft" data-delay="0.2s">Electronic recycle<br> platform</h1>
-                                    <p data-animation="fadeInLeft" data-delay="0.4s">Rapid technological advancements lead to a surge in
+                                    <h1 data-animation="fadeInLeft" data-delay="0.2s">Electronic recycle<br> platform
+                                    </h1>
+                                    <p data-animation="fadeInLeft" data-delay="0.4s">Rapid technological advancements
+                                        lead to a surge in
                                         outdated gadgets, contributing to e-waste.</p>
                                     <a href="{% url 'sell' user.id %}" class="btn hero-btn" data-animation="fadeInLeft"
                                         data-delay="0.7s">Sell</a> &nbsp;&nbsp; &nbsp;
@@ -112,9 +145,11 @@
                                     <br>
                                     <br>
                                     <p>View the products you bought here</p>
-                                    <a href="#order_history" data-toggle="modal"  class="btn hero-btn" data-animation="fadeInLeft" data-delay="0.7s">your
+                                    <a href="#order_history" data-toggle="modal" class="btn hero-btn"
+                                        data-animation="fadeInLeft" data-delay="0.7s">your
                                         orders History</a> &nbsp;&nbsp; &nbsp;
-                                    <a href="#user_cart" data-toggle="modal" class="btn hero-btn" data-animation="fadeInLeft" data-delay="0.7s">Cart</a>
+                                    <a href="#user_cart" data-toggle="modal" class="btn hero-btn"
+                                        data-animation="fadeInLeft" data-delay="0.7s">Cart</a>
                                 </div>
                             </div>
                         </div>
@@ -144,7 +179,8 @@
                             <div class="properties__caption">
                                 <h3>{{ product.product_name }}</h3>
                                 <p style="font-size: 16px;">
-                                    <strong style="font-size: 16px; padding-right: 15px;">{{ product.product_description }}</strong>
+                                    <strong style="font-size: 16px; padding-right: 15px;">{{ product.product_description
+                                        }}</strong>
                                 </p>
                                 <div class="properties__footer d-flex justify-content-between align-items-center">
                                     <div class="restaurant-name">
@@ -154,8 +190,8 @@
                                         <span>₹ {{ product.product_sell_price }}</span>
                                     </div>
                                 </div>
-                                <a href="{% url 'product_detail' user.id product.product_id %}"  class="btn hero-btn"
-                                        data-animation="fadeInLeft" data-delay="0.7s">Find out more</a>
+                                <a href="{% url 'product_detail' user.id product.product_id %}" class="btn hero-btn"
+                                    data-animation="fadeInLeft" data-delay="0.7s">Find out more</a>
                             </div>
                         </div>
                     </div>
@@ -228,12 +264,13 @@
             </div>
         </div>
         <!-- Modal -->
-        <div class="modal fade" id="user_cart" tabindex="-1" role="dialog"
-            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" id="user_cart" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+            aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalCenterTitle"><b style="font-size: 22px;">Your Cart</b></h5>
+                        <h5 class="modal-title" id="exampleModalCenterTitle"><b style="font-size: 22px;">Your Cart</b>
+                        </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -248,12 +285,13 @@
             </div>
         </div>
         <!-- Modal -->
-        <div class="modal fade" id="order_history" tabindex="-1" role="dialog"
-            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" id="order_history" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+            aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalCenterTitle"><b style="font-size: 22px;">Your Cart</b></h5>
+                        <h5 class="modal-title" id="exampleModalCenterTitle"><b style="font-size: 22px;">Your Cart</b>
+                        </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -331,12 +369,55 @@
         </div>
     </footer>
 
+    <!-- Credits Modal -->
+    <div class="modal fade" id="creditsModal" tabindex="-1" role="dialog" aria-labelledby="creditsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Buy Credits</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Current Credits: ₹{{ user_credits.Credits }}</p>
+                    <form id="buyCreditsForm" method="post" action="{% url 'buy_credits' request.user.pk %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="creditsAmount">Enter Credits:</label>
+                            <input type="number" class="form-control" id="creditsAmount" name="creditsAmount" min="1"
+                                required>
+                        </div>
+                        <p>Total Cost: ₹<span id="totalCost">0</span></p>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" form="buyCreditsForm" class="btn btn-primary">Pay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scroll Up -->
     <div id="back-top">
         <a title="Go to Top" href="#"> <i class="fas fa-level-up-alt"></i></a>
     </div>
 
+
+
+    <script>
+        document.getElementById('creditsAmount').addEventListener('input', function () {
+            var credits = Math.max(1, parseInt(this.value) || 1);
+            document.getElementById('totalCost').textContent = credits * 10;
+        });
+    </script>
+
     <!-- JS here -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+
     <script src="{% static './assets/js/vendor/modernizr-3.5.0.min.js' %}"></script>
     <!-- Jquery, Popper, Bootstrap -->
     <script src="{% static './assets/js/vendor/jquery-1.12.4.min.js' %}"></script>

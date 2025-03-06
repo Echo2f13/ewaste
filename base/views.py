@@ -4,12 +4,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
-from django.db import IntegrityError
 from django.contrib import messages
 from django.http import JsonResponse
 from events.models import userFull, product, cart, PRODUCT_CATEGORIES, userFull
 from django.contrib.auth import update_session_auth_hash
 from django.views.decorators.csrf import csrf_exempt
+from events.models import userCredits
 
 
 User = get_user_model()
@@ -122,7 +122,7 @@ def home(request, pk):
         current_userFull = None  # Set to None if the userFull entry is missing
 
     categories = product.objects.values_list('product_category', flat=True).distinct()
-    
+
     categorized_products = {
         category: product.objects.filter(product_category=category)
         .exclude(product_seller=current_userFull)
@@ -132,11 +132,19 @@ def home(request, pk):
 
     user_products = product.objects.filter(product_seller=current_userFull) if current_userFull else []
 
+    # ✅ Ensure userCredits exists
+    user_credits, created = userCredits.objects.get_or_create(user_id=pk, defaults={"Credits": 0})
+
     return render(request, 'base/home.html', {
         'categorized_products': categorized_products,
         'user_products': user_products,
-        'current_userFull': current_userFull
+        'current_userFull': current_userFull,
+        'user_credits': user_credits  # ✅ Now properly defined
     })
+
+
+
+
 
 
 @login_required
@@ -289,3 +297,22 @@ def edit_profile(request):
         return redirect('profile',pk=user.id)  # Ensure 'profile' is the correct URL
 
     return render(request, 'profile.html', {'user': user, 'profile': profile})
+
+def buy_credits(request, pk):
+    if request.user.pk != pk:
+        return redirect('home', pk=request.user.pk)
+ 
+
+    user = get_object_or_404(User, pk=pk)
+    
+    if request.method == 'POST':
+        credits_amount = int(request.POST.get('creditsAmount', 0))
+        user_credits, created = userCredits.objects.get_or_create(user=user)
+        user_credits.Credits += credits_amount
+        user_credits.save()
+
+        # 🔥 Refresh user session to reflect new credit balance
+        request.user.refresh_from_db()
+
+    return redirect('home', pk=pk)# Redirect back to home
+

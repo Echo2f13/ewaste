@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 import os
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 PRODUCT_CATEGORIES = [
     ('MOB_TAB', 'Mobiles and Tablets'),
@@ -145,11 +147,21 @@ class evaluatorGuy(models.Model):
         db_table = 'Evaluator Guy'
 
 class userCredits(models.Model):
-    userCredits_id = models.BigAutoField(primary_key='True', auto_created='True')
+    userCredits_id = models.BigAutoField(primary_key=True, auto_created=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     Credits = models.IntegerField(default=0)
-    
+
     class Meta:
         db_table = 'User Credits'
+
+# Signal to create userCredits when a new User is created
+@receiver(post_save, sender=User)
+def create_user_credits(sender, instance, created, **kwargs):
+    if created:
+        userCredits.objects.create(user=instance, Credits=0)
+
+# Connect the signal
+post_save.connect(create_user_credits, sender=User)
     
 class deliveryJob(models.Model):
     deliveryJob_id = models.BigAutoField(primary_key='True', auto_created='True')
