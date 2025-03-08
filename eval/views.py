@@ -96,6 +96,6 @@ def eval_logout(request):
 
 
 def more_jobs(request, pk):
-    has_job = evaluatorGuy.objects.filter(currently_working=1, evaluatorGuy_user_id=pk).exists()
-    products = product.objects.filter(product_evaluation_status=0)
-    return render(request, "eval/more_jobs.html", {"products": products, "has_job": has_job})
+     has_job = evaluatorGuy.objects.filter(currently_working=1, evaluatorGuy_user_id=pk).exists()
+     products = product.objects.filter(product_evaluation_status=0)
+     return render(request, "eval/more_jobs.html", {"products": products, "has_job": has_job})
