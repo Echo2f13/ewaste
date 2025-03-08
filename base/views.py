@@ -6,10 +6,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.http import JsonResponse
-from events.models import userFull, product, cart, PRODUCT_CATEGORIES, userFull
+from events.models import userFull, product, cart, PRODUCT_CATEGORIES, userCredits
 from django.contrib.auth import update_session_auth_hash
 from django.views.decorators.csrf import csrf_exempt
-from events.models import userCredits
 
 
 User = get_user_model()
@@ -149,7 +148,7 @@ def home(request, pk):
 
 @login_required
 def sell(request, pk):
-    seller = get_object_or_404(userFull, user = pk)  # Fetch seller by pk
+    seller = get_object_or_404(User, pk = pk)  # Fetch seller by pk
     print("Got into sell view - Method:", request.method)
 
     if request.method == "POST":
@@ -174,7 +173,7 @@ def sell(request, pk):
 
         # Create product instance
         new_product = product.objects.create(
-            product_seller=seller,
+            product_seller_id=seller.id,
             product_category=product_category,
             product_name=product_name,
             product_description=product_description,
@@ -191,7 +190,7 @@ def sell(request, pk):
         print("Product successfully created:", new_product)
         messages.success(request, "Product added successfully!")
 
-        return redirect("home", pk=request.user.pk)  # Redirect to home page
+        return redirect("home", pk=pk)  # Redirect to home page
 
     print("Work not done - rendering sell page")
     return render(request, "base/sell.html", {"seller": seller, "product_categories": PRODUCT_CATEGORIES})
