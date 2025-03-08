@@ -130,6 +130,7 @@ class deliveryGuy(models.Model):
     deliveryGuy_id = models.BigAutoField(primary_key='True', auto_created='True')
     deliveryGuy_image = models.ImageField(null='True', upload_to='')
     deliveryGuy_phoneNumber = models.CharField(max_length=15, unique=True, null=False)
+    currently_working = models.IntegerField(default=0)
     
     deliveryGuy_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='deliveryGuy')
 
@@ -141,6 +142,7 @@ class evaluatorGuy(models.Model):
     evaluatorGuy_image = models.ImageField(null='True', upload_to='')
     evaluatorGuy_phoneNumber = models.CharField(max_length=15, unique=True, null=False)
     
+    currently_working = models.IntegerField(default=0)
     evaluatorGuy_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='evaluatorGuy')
 
     class Meta:

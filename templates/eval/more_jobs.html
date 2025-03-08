@@ -110,7 +110,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="{% url 'more_jobs' user.id %}">
+                <a class="nav-link" href="#">
                     <i class="bi bi-grid"></i>
                     <span>More Jobs</span>
                 </a>
@@ -146,7 +146,38 @@
         <center>
 
             <div class="pagetitle">
-                <h1>Dashboard</h1>
+                <div class="container">
+                    {% if has_job %}
+                        <p style="color: red; font-weight: bold;">You have an ongoing job. Complete it before starting a new one.</p>
+                    {% endif %}
+                    <h2>Products Pending Evaluation</h2>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr>
+                                <td>{{ product.product_name }}</td>
+                                <td>{{ product.product_category }}</td>
+                                <td>{{ product.product_description }}</td>
+                                <td>
+                                    <a href="#" class="evaluate-btn">Evaluate</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4">No products pending evaluation.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
 
             </div><!-- End Page Title -->
         </center>

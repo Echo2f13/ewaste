@@ -23,6 +23,7 @@ def eval_loginForm(request):
           try:
                user = User.objects.get(email=email)
                eval_user = evaluatorGuy.objects.get(evaluatorGuy_user_id=user)
+               print("eval user exist and the id:", eval_user)
           except User.DoesNotExist:
                return render(
                     request, "eval/login.html", {"incorrect": "Email not registered"}
@@ -90,5 +91,11 @@ def eval_signup(request):
      return render(request, "eval/signup.html")
 
 def eval_logout(request):
-    logout(request)
-    return redirect("eval_loginForm")
+     logout(request)
+     return redirect("eval_loginForm")
+
+
+def more_jobs(request, pk):
+    has_job = evaluatorGuy.objects.filter(currently_working=1, evaluatorGuy_user_id=pk).exists()
+    products = product.objects.filter(product_evaluation_status=0)
+    return render(request, "eval/more_jobs.html", {"products": products, "has_job": has_job})
