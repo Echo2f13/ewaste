@@ -6,9 +6,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.http import JsonResponse
-from events.models import userFull, product, cart, PRODUCT_CATEGORIES, userCredits, evaluatorGuy
+from events.models import userFull, product, cart, PRODUCT_CATEGORIES, userCredits, evaluatorGuy, evaluatorJob
 from django.contrib.auth import update_session_auth_hash
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 
 
 # Create your views here.
@@ -99,3 +100,40 @@ def more_jobs(request, pk):
      has_job = evaluatorGuy.objects.filter(currently_working=1, evaluatorGuy_user_id=pk).exists()
      products = product.objects.filter(product_evaluation_status=0)
      return render(request, "eval/more_jobs.html", {"products": products, "has_job": has_job})
+
+def select_eval_product(request, pk, prod):
+     evaluator = evaluatorGuy.objects.filter(currently_working=0, evaluatorGuy_user_id=pk).first()
+     if evaluator:
+          current_product = get_object_or_404(product, product_id=prod)
+          evaluator.current_product = current_product
+          evaluator.currently_working = 1
+          evaluator.save()
+          evaluatorJob.objects.create(evaluatorJob_product=current_product, evaluatorGuy=evaluator)
+     return redirect('current_job', pk=pk)
+
+def complete_eval_product(request, pk, prod):
+     evaluator = evaluatorGuy.objects.filter(currently_working=1, evaluatorGuy_user_id=pk).first()
+     if request.method == "POST":
+          score = request.POST.get("score")
+          if evaluator:
+               current_product = get_object_or_404(product, product_id=prod)
+               current_product.product_evaluation_score = score
+               current_product.product_evaluation_status = 1
+               current_product.save()
+               evaluator.current_product = None
+               evaluator.currently_working = 0
+               evaluator.save()
+               evaluatorJob.objects.filter(evaluatorJob_product=current_product, evaluatorGuy=evaluator).update(evaluation_date=timezone.now())
+
+     return redirect('more_jobs', pk=pk)
+
+def current_job(request, pk):
+     # Check if evaluator is working on a product
+     evaluator = evaluatorGuy.objects.filter(currently_working=1, evaluatorGuy_user_id=pk).first()
+     current_product = evaluator.current_product if evaluator else None
+
+     return render(request, "eval/job.html", {"product": current_product, "has_job": bool(current_product)})
+
+def evaluation_history(request, pk):
+     history = evaluatorJob.objects.filter(evaluatorGuy_id=pk).order_by('-evaluation_date')
+     return render(request, "eval/history.html", {"history": history})

@@ -143,6 +143,7 @@ class evaluatorGuy(models.Model):
     evaluatorGuy_phoneNumber = models.CharField(max_length=15, unique=True, null=False)
     
     currently_working = models.IntegerField(default=0)
+    current_product = models.ForeignKey(product, on_delete=models.CASCADE, related_name="eval_product", null=True)
     evaluatorGuy_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='evaluatorGuy')
 
     class Meta:
@@ -174,10 +175,13 @@ class deliveryJob(models.Model):
     deliveryJob_status = models.IntegerField(default=0)
     
 class evaluatorJob(models.Model):
-    evaluatorJob_id = models.BigAutoField(primary_key='True', auto_created='True')
-    evaluatorJob_product = models.ForeignKey(product, on_delete=models.CASCADE)
-    evaluatorJob_seller = models.ForeignKey(userFull, on_delete=models.CASCADE)
-    evaluatorJob_status = models.IntegerField(default=0)
+    evaluatorJob_id = models.BigAutoField(primary_key=True)
+    evaluatorJob_product = models.ForeignKey(product, on_delete=models.CASCADE, null=True)
+    evaluatorGuy = models.ForeignKey('evaluatorGuy', on_delete=models.CASCADE, null=True)
+    evaluation_date = models.DateTimeField(auto_now_add=True, null=True)
+
+    class Meta:
+        db_table = 'Evaluator Job'
     
     
 class cart(models.Model):

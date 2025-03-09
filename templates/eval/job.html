@@ -32,43 +32,13 @@
     <!-- Template Main CSS File -->
     <link href="{% static 'admin/assets/css/style.css' %}" rel="stylesheet">
 
-    <style>
-        .product-card {
-            background-color: #e3f2fd;
-            border: 2px solid #6200ea;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-        }
-        .product-card h3 {
-            margin: 0;
-            color: #6200ea;
-        }
-        .product-details {
-            margin-top: 10px;
-            text-align: left;
-        }
-        .no-job {
-            color: red;
-            font-weight: bold;
-            margin-top: 20px;
-        }
-        .evaluate-btn {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .evaluate-btn.disabled {
-            background-color: #ccc;
-            color: #666;
-            pointer-events: none;
-            cursor: not-allowed;
-        }
-    </style>
+    <!-- =======================================================
+  * Template Name: NiceAdmin
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+  * Updated: Apr 20 2024 with Bootstrap v5.3.3
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
 </head>
 
 <body>
@@ -134,19 +104,19 @@
         <ul class="sidebar-nav" id="sidebar-nav">
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="{% url 'current_job' user.pk %}">
+                <a class="nav-link" href="#">
                     <i class="bi bi-grid"></i>
                     <span>Current Jobs</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link collapsed" href="{% url 'more_jobs' user.pk %}">
                     <i class="bi bi-grid"></i>
                     <span>More Jobs</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="index.html">
+                <a class="nav-link collapsed" href="{% url 'evaluation_history' user.pk %}">
                     <i class="bi bi-grid"></i>
                     <span>History</span>
                 </a>
@@ -177,37 +147,24 @@
 
             <div class="pagetitle">
                 <div class="container">
+                    <h2>Current Evaluation Job</h2>
                     {% if has_job %}
-                        <p style="color: red; font-weight: bold;">You have an ongoing job. Complete it before starting a new one.</p>
+                        <div class="product-card">
+                            <h3>{{ product.product_name }}</h3>
+                            <div class="product-details">
+                                <p><strong>Category:</strong> {{ product.product_category }}</p>
+                                <p><strong>Description:</strong> {{ product.product_description }}</p>
+                            </div>
+                            <form method="POST" action="{% url 'complete_eval_product' user.pk product.product_id %}">
+                                {% csrf_token %}
+                                <label for="score">Enter Evaluation Score:</label>
+                                <input type="number" id="score" name="score" min="0" max="100" required>
+                                <button type="submit" class="evaluate-btn">Complete Evaluation</button>
+                            </form>
+                        </div>
+                    {% else %}
+                        <p class="no-job">You are not currently working on any product.</p>
                     {% endif %}
-                    <h2>Products Pending Evaluation</h2>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Product Name</th>
-                                <th>Category</th>
-                                <th>Description</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for product in products %}
-                            <tr>
-                                <td>{{ product.product_name }}</td>
-                                <td>{{ product.product_category }}</td>
-                                <td>{{ product.product_description }}</td>
-                                <td>
-                                    <a href="{% url 'select_eval_product' user.pk product.product_id %}" 
-                                    class="evaluate-btn {% if has_job %} disabled {% endif %}" >Evaluate</a>
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="4">No products pending evaluation.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
                 </div>
 
             </div><!-- End Page Title -->
