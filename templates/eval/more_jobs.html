@@ -40,19 +40,23 @@
             padding: 15px;
             margin-top: 20px;
         }
+
         .product-card h3 {
             margin: 0;
             color: #6200ea;
         }
+
         .product-details {
             margin-top: 10px;
             text-align: left;
         }
+
         .no-job {
             color: red;
             font-weight: bold;
             margin-top: 20px;
         }
+
         .evaluate-btn {
             background-color: #4CAF50;
             color: white;
@@ -62,6 +66,7 @@
             cursor: pointer;
             text-decoration: none;
         }
+
         .evaluate-btn.disabled {
             background-color: #ccc;
             color: #666;
@@ -160,7 +165,8 @@
 
             <li class="nav-item">
                 <!-- <a class="nav-link collapsed" href="#"> -->
-                <a class="nav-link collapsed" href="#">
+                <a class="nav-link d-flex align-items-center" href="#" data-bs-toggle="modal"
+                    data-bs-target="#profileModal">
                     <i class="bi bi-person"></i>
                     <span>Profile</span>
                 </a>
@@ -178,7 +184,8 @@
             <div class="pagetitle">
                 <div class="container">
                     {% if has_job %}
-                        <p style="color: red; font-weight: bold;">You have an ongoing job. Complete it before starting a new one.</p>
+                    <p style="color: red; font-weight: bold;">You have an ongoing job. Complete it before starting a new
+                        one.</p>
                     {% endif %}
                     <h2>Products Pending Evaluation</h2>
                     <table class="table">
@@ -197,8 +204,8 @@
                                 <td>{{ product.product_category }}</td>
                                 <td>{{ product.product_description }}</td>
                                 <td>
-                                    <a href="{% url 'select_eval_product' user.pk product.product_id %}" 
-                                    class="evaluate-btn {% if has_job %} disabled {% endif %}" >Evaluate</a>
+                                    <a href="{% url 'select_eval_product' user.pk product.product_id %}"
+                                        class="evaluate-btn {% if has_job %} disabled {% endif %}">Evaluate</a>
                                 </td>
                             </tr>
                             {% empty %}
@@ -221,6 +228,76 @@
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
             class="bi bi-arrow-up-short"></i></a>
+
+    <!-- Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLabel">Profile Settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    
+                    <div id="viewProfile">
+                        <h6><strong>Phone Number:</strong></h6>
+                        <p id="phoneNumber">
+                            {{ evaluator.evaluatorGuy_phoneNumber|default:"Not Provided" }}
+                        </p>
+                    </div>
+
+                    <!-- Update Password Form -->
+                    <form id="updatePasswordForm" method="POST" action="{% url 'update_password' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="oldPassword" class="form-label">Old Password</label>
+                            <input type="password" class="form-control" id="oldPassword" name="old_password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" name="new_password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirm_password"
+                                required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Password</button>
+                    </form>
+
+                    <!-- Update Phone Number Form -->
+                    <form id="updatePhoneForm" method="POST" action="{% url 'update_phone' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="newPhone" class="form-label">New Phone Number</label>
+                            <input type="text" class="form-control" id="newPhone" name="new_phone" required>
+                        </div>
+                        <button type="submit" class="btn btn-success">Update Phone Number</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Button to Trigger Modal -->
+    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="modal"
+        data-bs-target="#profileModal">
+        <img src="admin/assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+        <span class="d-none d-md-block dropdown-toggle ps-2">user</span>
+    </a>
+
+    <script>
+        document.getElementById("updatePasswordForm").addEventListener("submit", function (e) {
+            let newPassword = document.getElementById("newPassword").value;
+            let confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (newPassword !== confirmPassword) {
+                alert("New password and confirmation password do not match!");
+                e.preventDefault();
+            }
+        });
+    </script>
+
 
     <!-- Vendor JS Files -->
     <script src="{% static 'admin/assets/vendor/apexcharts/apexcharts.min.js' %}"></script>

@@ -10,6 +10,7 @@ from events.models import userFull, product, cart, PRODUCT_CATEGORIES, userCredi
 from django.contrib.auth import update_session_auth_hash
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
+from django.urls import reverse
 
 
 # Create your views here.
@@ -137,3 +138,65 @@ def current_job(request, pk):
 def evaluation_history(request, pk):
      history = evaluatorJob.objects.filter(evaluatorGuy_id=pk).order_by('-evaluation_date')
      return render(request, "eval/history.html", {"history": history})
+
+@login_required
+def view_profile(request):
+    try:
+        evaluator = evaluatorGuy.objects.get(evaluatorGuy_user=request.user)
+    except evaluatorGuy.DoesNotExist:
+        evaluator = None  # Handle case where evaluator does not exist
+
+    context = {
+        'evaluator': evaluator,
+    }
+
+    return render(request, 'eval/view_profile.html', context)
+
+
+
+@login_required
+def update_password(request):
+    if request.method == "POST":
+        old_password = request.POST["old_password"]
+        new_password = request.POST["new_password"]
+        confirm_password = request.POST["confirm_password"]
+
+        user = request.user
+
+        if not user.check_password(old_password):
+            messages.error(request, "Old password is incorrect.")
+            return redirect('update_password')
+
+        if new_password != confirm_password:
+            messages.error(request, "New passwords do not match.")
+            return redirect('update_password')
+
+        user.set_password(new_password)
+        user.save()
+
+        # ✅ This keeps the user logged in after password change
+        update_session_auth_hash(request, user)
+
+        messages.success(request, "Password updated successfully.")
+
+        # Fetch evaluator's primary key (pk)
+        evaluator = evaluatorGuy.objects.get(evaluatorGuy_user=user)
+        return redirect(reverse('more_jobs', kwargs={'pk': evaluator.pk}))
+
+    return redirect('more_jobs')
+
+@login_required
+def update_phone(request):
+    if request.method == "POST":
+        new_phone = request.POST["new_phone"]
+
+        evaluator = evaluatorGuy.objects.get(evaluatorGuy_user=request.user)
+        evaluator.evaluatorGuy_phoneNumber = new_phone
+        evaluator.save()
+
+        messages.success(request, "Phone number updated successfully.")
+
+        # Ensure the redirect includes the required pk
+        return redirect(reverse('more_jobs', kwargs={'pk': evaluator.pk}))
+
+    return redirect('more_jobs')
