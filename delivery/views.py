@@ -98,3 +98,60 @@ def dlv_logout(request):
     logout(request)
     return redirect("dlv_loginForm")
 
+
+def delivery_more_jobs(request, pk):
+    delivery_guy = get_object_or_404(deliveryGuy, pk=pk)
+    return render(request, "delivery/home.html", {"phone_number": delivery_guy.deliveryGuy_phoneNumber})
+
+@login_required
+def delivery_update_password(request):
+    if request.method == "POST":
+        old_password = request.POST["old_password"]
+        new_password = request.POST["new_password"]
+        confirm_password = request.POST["confirm_password"]
+
+        user = request.user
+
+        if not user.check_password(old_password):
+            messages.error(request, "Old password is incorrect.")
+            return redirect('delivery_update_password')
+
+        if new_password != confirm_password:
+            messages.error(request, "New passwords do not match.")
+            return redirect('delivery_update_password')
+
+        user.set_password(new_password)
+        user.save()
+
+        # ✅ This keeps the user logged in after password change
+        update_session_auth_hash(request, user)
+
+        messages.success(request, "Password updated successfully.")
+
+        # Fetch delivery guy's primary key (pk)
+        delivery_guy = deliveryGuy.objects.get(deliveryGuy_user=user)
+        return redirect(reverse('delivery_more_jobs', kwargs={'pk': delivery_guy.pk}))
+
+    return redirect('delivery_more_jobs')
+
+@login_required
+def delivery_update_phone(request):
+    if request.method == "POST":
+        new_phone = request.POST["new_phone"]
+
+        # Check if the phone number already exists
+        if deliveryGuy.objects.filter(deliveryGuy_phoneNumber=new_phone).exists():
+            messages.error(request, "Phone number already exists.")
+            return redirect('delivery_update_phone')
+
+        delivery_guy = deliveryGuy.objects.get(deliveryGuy_user=request.user)
+        delivery_guy.deliveryGuy_phoneNumber = new_phone
+        delivery_guy.save()
+
+        messages.success(request, "Phone number updated successfully.")
+
+        # Ensure the redirect includes the required pk
+        return redirect(reverse('delivery_more_jobs', kwargs={'pk': delivery_guy.pk}))
+
+    return redirect('delivery_more_jobs')
+

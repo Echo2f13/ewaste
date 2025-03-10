@@ -108,10 +108,12 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
+                            <a class="dropdown-item d-flex align-items-center" href="#" data-bs-toggle="modal"
+                                data-bs-target="#evaluatorProfileModal">
                                 <i class="bi bi-person"></i>
                                 <span>My Profile</span>
                             </a>
+
                         </li>
                         <li>
                             <hr class="dropdown-divider">
@@ -156,22 +158,6 @@
                     <span>History</span>
                 </a>
             </li>
-
-            <!-- End Dashboard Nav -->
-
-
-
-            <li class="nav-heading">Pages</li>
-
-            <li class="nav-item">
-                <!-- <a class="nav-link collapsed" href="#"> -->
-                <a class="nav-link d-flex align-items-center" href="#" data-bs-toggle="modal"
-                    data-bs-target="#profileModal">
-                    <i class="bi bi-person"></i>
-                    <span>Profile</span>
-                </a>
-            </li><!-- End Profile Page Nav -->
-
 
 
         </ul>
@@ -229,48 +215,60 @@
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
             class="bi bi-arrow-up-short"></i></a>
 
-    <!-- Profile Modal -->
-    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal fade" id="evaluatorProfileModal" tabindex="-1" aria-labelledby="evaluatorProfileModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="profileModalLabel">Profile Settings</h5>
+                    <h5 class="modal-title" id="evaluatorProfileModalLabel">Evaluator Profile Settings</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    
-                    <div id="viewProfile">
+                    <!-- Buttons to Toggle Sections -->
+                    <div class="d-grid gap-2 mb-3">
+                        <button class="btn btn-primary" onclick="showSection('viewEvaluatorProfile')">View Phone
+                            Number</button>
+                        <button class="btn btn-warning" onclick="showSection('updateEvaluatorPasswordForm')">Edit
+                            Password</button>
+                        <button class="btn btn-success" onclick="showSection('updateEvaluatorPhoneForm')">Edit Phone
+                            Number</button>
+                    </div>
+
+                    <!-- View Profile Section -->
+                    <div id="viewEvaluatorProfile" class="section-content">
                         <h6><strong>Phone Number:</strong></h6>
-                        <p id="phoneNumber">
-                            {{ evaluator.evaluatorGuy_phoneNumber|default:"Not Provided" }}
-                        </p>
+                        <p id="evaluatorPhoneNumber">{{ phone_number|default:"Not Provided" }}</p>
                     </div>
 
                     <!-- Update Password Form -->
-                    <form id="updatePasswordForm" method="POST" action="{% url 'update_password' %}">
+                    <form id="updateEvaluatorPasswordForm" method="POST" action="{% url 'evaluator_update_password' %}"
+                        class="section-content d-none">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <label for="oldPassword" class="form-label">Old Password</label>
-                            <input type="password" class="form-control" id="oldPassword" name="old_password" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="newPassword" class="form-label">New Password</label>
-                            <input type="password" class="form-control" id="newPassword" name="new_password" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                            <input type="password" class="form-control" id="confirmPassword" name="confirm_password"
+                            <label for="evaluatorOldPassword" class="form-label">Old Password</label>
+                            <input type="password" class="form-control" id="evaluatorOldPassword" name="old_password"
                                 required>
                         </div>
-                        <button type="submit" class="btn btn-primary">Update Password</button>
+                        <div class="mb-3">
+                            <label for="evaluatorNewPassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="evaluatorNewPassword" name="new_password"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="evaluatorConfirmPassword" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="evaluatorConfirmPassword"
+                                name="confirm_password" required>
+                        </div>
+                        <button type="submit" class="btn btn-warning">Update Password</button>
                     </form>
 
                     <!-- Update Phone Number Form -->
-                    <form id="updatePhoneForm" method="POST" action="{% url 'update_phone' %}">
+                    <form id="updateEvaluatorPhoneForm" method="POST" action="{% url 'evaluator_update_phone' %}"
+                        class="section-content d-none">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <label for="newPhone" class="form-label">New Phone Number</label>
-                            <input type="text" class="form-control" id="newPhone" name="new_phone" required>
+                            <label for="evaluatorNewPhone" class="form-label">New Phone Number</label>
+                            <input type="text" class="form-control" id="evaluatorNewPhone" name="new_phone" required>
                         </div>
                         <button type="submit" class="btn btn-success">Update Phone Number</button>
                     </form>
@@ -281,15 +279,23 @@
 
     <!-- Profile Button to Trigger Modal -->
     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="modal"
-        data-bs-target="#profileModal">
+        data-bs-target="#evaluatorProfileModal">
         <img src="admin/assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-        <span class="d-none d-md-block dropdown-toggle ps-2">user</span>
+        <span class="d-none d-md-block dropdown-toggle ps-2">Evaluator</span>
     </a>
 
+    <!-- JavaScript for Toggling Sections -->
     <script>
-        document.getElementById("updatePasswordForm").addEventListener("submit", function (e) {
-            let newPassword = document.getElementById("newPassword").value;
-            let confirmPassword = document.getElementById("confirmPassword").value;
+        function showSection(sectionId) {
+            document.querySelectorAll(".section-content").forEach(section => {
+                section.classList.add("d-none");
+            });
+            document.getElementById(sectionId).classList.remove("d-none");
+        }
+
+        document.getElementById("updateEvaluatorPasswordForm").addEventListener("submit", function (e) {
+            let newPassword = document.getElementById("evaluatorNewPassword").value;
+            let confirmPassword = document.getElementById("evaluatorConfirmPassword").value;
 
             if (newPassword !== confirmPassword) {
                 alert("New password and confirmation password do not match!");
@@ -297,6 +303,8 @@
             }
         });
     </script>
+
+
 
 
     <!-- Vendor JS Files -->

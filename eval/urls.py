@@ -15,8 +15,9 @@ urlpatterns = [
     path('signup', views.eval_signup, name='eval_signup'),
     path('logout', views.eval_logout, name='eval_logout'),
 
-    path('update-password/', views.update_password, name='update_password'),
-    path('update-phone/', views.update_phone, name='update_phone'),
-    path('view-profile/<int:pk>/', views.view_profile, name='view_profile'),
+    path('evaluator_profile/<int:pk>/', views.evaluator_profile, name='evaluator_profile'),
+    path('evaluator_update_password/', views.evaluator_update_password, name='evaluator_update_password'),
+    path('evaluator_update_phone/', views.evaluator_update_phone, name='evaluator_update_phone'),
+
 
 ]
