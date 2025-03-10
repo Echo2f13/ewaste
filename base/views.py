@@ -148,7 +148,7 @@ def home(request, pk):
 
 @login_required
 def sell(request, pk):
-    seller = get_object_or_404(User, pk = pk)  # Fetch seller by pk
+    seller = get_object_or_404(userFull, user_id = pk)  # Fetch seller by pk
     print("Got into sell view - Method:", request.method)
 
     if request.method == "POST":
@@ -173,7 +173,7 @@ def sell(request, pk):
 
         # Create product instance
         new_product = product.objects.create(
-            product_seller_id=seller.id,
+            product_seller_id=seller.userFull_id,
             product_category=product_category,
             product_name=product_name,
             product_description=product_description,

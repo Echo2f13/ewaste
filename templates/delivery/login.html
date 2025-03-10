@@ -6,13 +6,13 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Sign Up | Care</title>
+    <title>login | Care</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
 
     <!-- Favicons -->
-    <link href="{% static 'admin/assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
     <link href="{% static 'admin/assets/img/favicon.png' %}" rel="icon">
+    <link href="{% static 'admin/assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -53,7 +53,7 @@
                         <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
 
                             <div class="d-flex justify-content-center py-4">
-                                <span class="card-title pb-0 fs-4 d-lg-block"><b>Evaluator Register</b></span>
+                                <span class="card-title pb-0 fs-4 d-lg-block"><b>Delivery Login</b></span>
                             </div><!-- End Logo -->
 
                             <div class="card mb-3">
@@ -61,50 +61,21 @@
                                 <div class="card-body">
 
                                     <div class="pt-4 pb-2">
-                                        <h5 class="card-title text-center pb-0 fs-4">Create an Account</h5>
+                                        <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
                                     </div>
+                                    <br><br>
 
-                                    <form accept="{% url 'eval_signup' %}" method="post" enctype="multipart/form-data"
+                                    <form action="{% url 'dlv_loginForm' %}" method="post" enctype="multipart/form-data"
                                         class="row g-3 needs-validation" novalidate>
                                         {% csrf_token %}
-                                        {% if message1 == 1 %}
-                                        <h4>this email is already used for another account, please try another email
-                                        </h4>
-                                        {% endif %}
-                                        <!-- <h4>{{ integrityerror }}</h4> -->
-                                        <!-- <h4>{{ error }}</h4> -->
                                         <div class="col-12">
-                                            <label for="yourName" class="form-label">First Name</label>
-                                            <input type="text" name="first_name" class="form-control" id="yourName"
-                                                required>
-                                            <div class="invalid-feedback">Please, enter your name!</div>
-                                        </div>
-
-                                        <div class="col-12">
-                                            <label for="yourName" class="form-label">Last Name</label>
-                                            <input type="text" name="last_name" class="form-control" id="yourName"
-                                                required>
-                                            <div class="invalid-feedback">Please, enter your name!</div>
-                                        </div>
-                                        <div class="col-12">
-                                            <label for="yourName" class="form-label">Username</label>
-                                            <input type="text" name="username" class="form-control" id="yourName"
-                                                required>
-                                            <div class="invalid-feedback">Please, enter your username!</div>
-                                        </div>
-
-
-                                        <div class="col-12">
-                                            <label for="yourEmail" class="form-label">Your Email</label>
-                                            <input type="email" name="email" class="form-control" id="yourEmail"
-                                                required>
-                                            <div class="invalid-feedback">Please enter a valid Email adddress!</div>
-                                        </div>
-
-                                        <div class=
-                                        <div class="col-12">
-                                            <label for="yourEmail" class="form-label">Your Phone number</label>
-                                            <input type="tel" id="phone" name="phone" class="form-control" required>
+                                            <label for="yourUsername" class="form-label">Email</label>
+                                            <div class="input-group has-validation">
+                                                <!-- <span class="input-group-text" id="inputGroupPrepend">@</span> -->
+                                                <input type="email" name="email" class="form-control"
+                                                    id="yourUsername" required>
+                                                <div class="invalid-feedback">Please enter your email.</div>
+                                            </div>
                                         </div>
 
                                         <div class="col-12">
@@ -114,31 +85,29 @@
                                             <div class="invalid-feedback">Please enter your password!</div>
                                         </div>
 
-                                        <div class="col-12">
+                                        <!-- <div class="col-12">
                                             <div class="form-check">
-                                                <input class="form-check-input" name="terms" type="checkbox" value=""
-                                                    id="acceptTerms" required>
-                                                <label class="form-check-label" for="acceptTerms">I agree and accept the
-                                                    <a href="#">terms and conditions</a></label>
-                                                <div class="invalid-feedback">You must agree before submitting.</div>
+                                                <input class="form-check-input" type="checkbox" name="remember"
+                                                    value="true" id="rememberMe">
+                                                <label class="form-check-label" for="rememberMe">Remember me</label>
                                             </div>
+                                        </div> -->
+                                        
+                                        <div class="col-12">
+                                            <button class="btn btn-primary w-100" type="submit">Login</button>
                                         </div>
                                         <div class="col-12">
-                                            <button class="btn btn-primary w-100" type="submit">Create Account</button>
-                                        </div>
-                                        <div class="col-12">
-                                            <p class="small mb-0">Already have an account? <a
-                                                    href="{% url 'eval_loginForm' %}">Log in</a></p>
+                                                <a href="{% url 'dlv_signup' %}">Signup</a>
                                         </div>
                                     </form>
 
                                 </div>
                             </div>
 
-
+                            <div class="credits">
+                            </div>
                         </div>
                     </div>
-                </div>
 
             </section>
 
@@ -149,7 +118,7 @@
             class="bi bi-arrow-up-short"></i></a>
 
     <!-- Vendor JS Files -->
-    <script src="{% static 'admin/admin/assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
+    <script src="{% static 'admin/assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
     <script src="{% static 'admin/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'admin/assets/vendor/chart.js/chart.umd.js' %}"></script>
     <script src="{% static 'admin/assets/vendor/echarts/echarts.min.js' %}"></script>

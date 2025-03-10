@@ -131,6 +131,7 @@ class deliveryGuy(models.Model):
     deliveryGuy_image = models.ImageField(null='True', upload_to='')
     deliveryGuy_phoneNumber = models.CharField(max_length=15, unique=True, null=False)
     currently_working = models.IntegerField(default=0)
+    current_product = models.ForeignKey(product, on_delete=models.CASCADE, related_name="dlv_product", null=True)
     
     deliveryGuy_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='deliveryGuy')
 

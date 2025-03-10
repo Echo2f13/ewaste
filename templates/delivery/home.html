@@ -31,27 +31,6 @@
 
     <!-- Template Main CSS File -->
     <link href="{% static 'admin/assets/css/style.css' %}" rel="stylesheet">
-    <style>
-        .container {
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-        th {
-            background-color: #6200ea;
-            color: #fff;
-        }
-    </style>
 
     <!-- =======================================================
   * Template Name: NiceAdmin
@@ -70,7 +49,7 @@
         <div class="d-flex align-items-center justify-content-between">
             <a href="index.html" class="logo d-flex align-items-center">
                 <img src="admin/assets/img/logo.png" alt="">
-                <span class="d-none d-lg-block">Evaluator</span>
+                <span class="d-none d-lg-block">Delivery</span>
             </a>
             <i class="bi bi-list toggle-sidebar-btn"></i>
         </div><!-- End Logo -->
@@ -108,7 +87,7 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="{% url 'eval_logout' %}">
+                            <a class="dropdown-item d-flex align-items-center" href="{% url 'dlv_logout' %}">
                                 <i class="bi bi-box-arrow-right"></i>
                                 <span>Sign Out</span>
                             </a>
@@ -125,19 +104,19 @@
         <ul class="sidebar-nav" id="sidebar-nav">
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="{% url 'current_job' user.pk %}">
+                <a class="nav-link collapsed" href="#">
                     <i class="bi bi-grid"></i>
                     <span>Current Jobs</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="{% url 'more_jobs' user.pk %}">
+                <a class="nav-link collapsed" href="#">
                     <i class="bi bi-grid"></i>
                     <span>More Jobs</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link collapsed" href="#">
                     <i class="bi bi-grid"></i>
                     <span>History</span>
                 </a>
@@ -167,33 +146,7 @@
         <center>
 
             <div class="pagetitle">
-                <div class="container">
-                    <h2>Evaluation History</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>S.No</th>
-                                <th>Product Name</th>
-                                <th>Evaluation Date</th>
-                                <th>Score</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for job in history %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ job.evaluatorJob_product.product_name }}</td>
-                                <td>{{ job.evaluation_date }}</td>
-                                <td>{{ job.evaluatorJob_product.product_evaluation_score|default:"N/A" }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="2">No evaluation history available.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                <h1>Dashboard</h1>
 
             </div><!-- End Page Title -->
         </center>

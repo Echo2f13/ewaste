@@ -110,7 +110,7 @@
                 </div>
                 <h2>Here</h2>
                 <div class="courses-actives">
-                    <form method="POST" action="{% url 'sell' seller.pk %}" enctype="multipart/form-data">
+                    <form method="POST" action="{% url 'sell' user.pk %}" enctype="multipart/form-data">
                         {% csrf_token %}
                     
                         <label>Upload Images:</label>
@@ -127,7 +127,7 @@
                         </select>
                         <br><br>
                     
-                        <label>Sell name:</label> <br>
+                        <label>Product name:</label> <br>
                         <input type="text" name="product_name" required>
                         <br><br>
                     
