@@ -99,9 +99,28 @@ def dlv_logout(request):
     return redirect("dlv_loginForm")
 
 
-def delivery_more_jobs(request, pk):
-    delivery_guy = get_object_or_404(deliveryGuy, pk=pk)
-    return render(request, "delivery/home.html", {"phone_number": delivery_guy.deliveryGuy_phoneNumber})
+
+def dlv_more_jobs(request, pk):
+    has_job = deliveryGuy.objects.filter(currently_working=1, deliveryGuy_user_id=pk).exists()
+    products = product.objects.filter(product_sold=0, product_onDelivery = 0)
+    return render(request, "delivery/more_jobs.html", {"products": products, "has_job": has_job})
+
+def select_dlv_product(request, pk, prod):
+    dlv_guy = deliveryGuy.objects.filter(currently_working=0, deliveryGuy_user_id=pk).first()
+    if dlv_guy:
+        current_product = get_object_or_404(product, product_id=prod)
+        dlv_guy.current_product = current_product
+        dlv_guy.currently_working = 1
+        dlv_guy.save()
+        deliveryJob.objects.create(deliveryJob_product=current_product, deliveryJob_deliveryGuy=dlv_guy)
+    return redirect('current_dlv_job', pk=pk)
+
+def current_job(request, pk):
+     # Check if evaluator is working on a product
+     dlv_guy = deliveryGuy.objects.filter(currently_working=1, deliveryGuy_user_id=pk).first()
+     current_product = dlv_guy.current_product if dlv_guy else None
+
+     return render(request, "delivery/job.html", {"product": current_product, "has_job": bool(current_product)})
 
 @login_required
 def delivery_update_password(request):

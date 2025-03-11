@@ -49,7 +49,7 @@
         <div class="d-flex align-items-center justify-content-between">
             <a href="index.html" class="logo d-flex align-items-center">
                 <img src="admin/assets/img/logo.png" alt="">
-                <span class="d-none d-lg-block">Delivery</span>
+                <span class="d-none d-lg-block">Evaluator</span>
             </a>
             <i class="bi bi-list toggle-sidebar-btn"></i>
         </div><!-- End Logo -->
@@ -73,12 +73,10 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#" data-bs-toggle="modal"
-                                data-bs-target="#profileModal">
+                            <a class="dropdown-item d-flex align-items-center" href="#">
                                 <i class="bi bi-person"></i>
                                 <span>My Profile</span>
                             </a>
-
                         </li>
                         <li>
                             <hr class="dropdown-divider">
@@ -106,7 +104,7 @@
         <ul class="sidebar-nav" id="sidebar-nav">
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#">
+                <a class="nav-link" href="#">
                     <i class="bi bi-grid"></i>
                     <span>Current Jobs</span>
                 </a>
@@ -125,6 +123,21 @@
             </li>
 
             <!-- End Dashboard Nav -->
+
+
+
+            <li class="nav-heading">Pages</li>
+
+            <li class="nav-item">
+                <!-- <a class="nav-link collapsed" href="#"> -->
+                <a class="nav-link collapsed" href="#">
+                    <i class="bi bi-person"></i>
+                    <span>Profile</span>
+                </a>
+            </li><!-- End Profile Page Nav -->
+
+
+
         </ul>
 
     </aside><!-- End Sidebar-->
@@ -133,7 +146,26 @@
         <center>
 
             <div class="pagetitle">
-                <h1>Dashboard</h1>
+                <div class="container">
+                    <h2>Current Evaluation Job</h2>
+                    {% if has_job %}
+                        <div class="product-card">
+                            <h3>{{ product.product_name }}</h3>
+                            <div class="product-details">
+                                <p><strong>Category:</strong> {{ product.product_category }}</p>
+                                <p><strong>Description:</strong> {{ product.product_description }}</p>
+                            </div>
+                            <form method="POST" action="#">
+                                {% csrf_token %}
+                                <label for="score">Enter Evaluation Score:</label>
+                                <input type="number" id="score" name="score" min="0" max="100" required>
+                                <button type="submit" class="evaluate-btn">Complete Evaluation</button>
+                            </form>
+                        </div>
+                    {% else %}
+                        <p class="no-job">You are not currently working on any product.</p>
+                    {% endif %}
+                </div>
 
             </div><!-- End Page Title -->
         </center>
@@ -146,94 +178,6 @@
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
             class="bi bi-arrow-up-short"></i></a>
-
-    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="profileModalLabel">Delivery Guy Profile Settings</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Buttons to Toggle Sections -->
-                    <div class="d-grid gap-2 mb-3">
-                        <button class="btn btn-primary" onclick="showSection('viewProfile')">View Phone Number</button>
-                        <button class="btn btn-warning" onclick="showSection('updatePasswordForm')">Edit
-                            Password</button>
-                        <button class="btn btn-success" onclick="showSection('updatePhoneForm')">Edit Phone
-                            Number</button>
-                    </div>
-
-                    <!-- View Profile Section -->
-                    <div id="viewProfile" class="section-content">
-                        <h6><strong>Phone Number:</strong></h6>
-                        <p id="phoneNumber">{{ phone_number|default:"Not Provided" }}</p>
-                    </div>
-
-                    <!-- Update Password Form (Initially Hidden) -->
-                    <form id="updatePasswordForm" method="POST" action="{% url 'delivery_update_password' %}"
-                        class="section-content d-none">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="oldPassword" class="form-label">Old Password</label>
-                            <input type="password" class="form-control" id="oldPassword" name="old_password" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="newPassword" class="form-label">New Password</label>
-                            <input type="password" class="form-control" id="newPassword" name="new_password" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                            <input type="password" class="form-control" id="confirmPassword" name="confirm_password"
-                                required>
-                        </div>
-                        <button type="submit" class="btn btn-warning">Update Password</button>
-                    </form>
-
-                    <!-- Update Phone Number Form (Initially Hidden) -->
-                    <form id="updatePhoneForm" method="POST" action="{% url 'delivery_update_phone' %}"
-                        class="section-content d-none">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="newPhone" class="form-label">New Phone Number</label>
-                            <input type="text" class="form-control" id="newPhone" name="new_phone" required>
-                        </div>
-                        <button type="submit" class="btn btn-success">Update Phone Number</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Profile Button to Trigger Modal -->
-    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="modal"
-        data-bs-target="#profileModal">
-        <img src="admin/assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-        <span class="d-none d-md-block dropdown-toggle ps-2">Delivery Guy</span>
-    </a>
-
-    <!-- JavaScript for Toggling Sections -->
-    <script>
-        function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll(".section-content").forEach(section => {
-                section.classList.add("d-none");
-            });
-
-            // Show the selected section
-            document.getElementById(sectionId).classList.remove("d-none");
-        }
-
-        document.getElementById("updatePasswordForm").addEventListener("submit", function (e) {
-            let newPassword = document.getElementById("newPassword").value;
-            let confirmPassword = document.getElementById("confirmPassword").value;
-
-            if (newPassword !== confirmPassword) {
-                alert("New password and confirmation password do not match!");
-                e.preventDefault();
-            }
-        });
-    </script>
 
 
     <!-- Vendor JS Files -->

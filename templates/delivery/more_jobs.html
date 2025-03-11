@@ -32,13 +32,48 @@
     <!-- Template Main CSS File -->
     <link href="{% static 'admin/assets/css/style.css' %}" rel="stylesheet">
 
-    <!-- =======================================================
-  * Template Name: NiceAdmin
-  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-  * Updated: Apr 20 2024 with Bootstrap v5.3.3
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
+    <style>
+        .product-card {
+            background-color: #e3f2fd;
+            border: 2px solid #6200ea;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .product-card h3 {
+            margin: 0;
+            color: #6200ea;
+        }
+
+        .product-details {
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        .no-job {
+            color: red;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .evaluate-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .evaluate-btn.disabled {
+            background-color: #ccc;
+            color: #666;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 
 <body>
@@ -49,7 +84,7 @@
         <div class="d-flex align-items-center justify-content-between">
             <a href="index.html" class="logo d-flex align-items-center">
                 <img src="admin/assets/img/logo.png" alt="">
-                <span class="d-none d-lg-block">Delivery</span>
+                <span class="d-none d-lg-block">Evaluator</span>
             </a>
             <i class="bi bi-list toggle-sidebar-btn"></i>
         </div><!-- End Logo -->
@@ -74,7 +109,7 @@
 
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="#" data-bs-toggle="modal"
-                                data-bs-target="#profileModal">
+                                data-bs-target="#evaluatorProfileModal">
                                 <i class="bi bi-person"></i>
                                 <span>My Profile</span>
                             </a>
@@ -112,7 +147,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="{% url 'dlv_more_jobs' user.pk %}">
+                <a class="nav-link" href="#">
                     <i class="bi bi-grid"></i>
                     <span>More Jobs</span>
                 </a>
@@ -124,7 +159,7 @@
                 </a>
             </li>
 
-            <!-- End Dashboard Nav -->
+
         </ul>
 
     </aside><!-- End Sidebar-->
@@ -133,7 +168,40 @@
         <center>
 
             <div class="pagetitle">
-                <h1>Dashboard</h1>
+                <div class="container">
+                    {% if has_job %}
+                    <p style="color: red; font-weight: bold;">You have an ongoing job. Complete it before starting a new
+                        one.</p>
+                    {% endif %}
+                    <h2>Products Pending Evaluation</h2>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr>
+                                <td>{{ product.product_name }}</td>
+                                <td>{{ product.product_category }}</td>
+                                <td>{{ product.product_description }}</td>
+                                <td>
+                                    <a href="{% url 'select_dlv_product' user.pk product.product_id %}"
+                                        class="evaluate-btn {% if has_job %} disabled {% endif %}">Deliver</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4">No products pending evaluation.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
 
             </div><!-- End Page Title -->
         </center>
@@ -147,56 +215,60 @@
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
             class="bi bi-arrow-up-short"></i></a>
 
-    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal fade" id="evaluatorProfileModal" tabindex="-1" aria-labelledby="evaluatorProfileModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="profileModalLabel">Delivery Guy Profile Settings</h5>
+                    <h5 class="modal-title" id="evaluatorProfileModalLabel">Evaluator Profile Settings</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <!-- Buttons to Toggle Sections -->
                     <div class="d-grid gap-2 mb-3">
-                        <button class="btn btn-primary" onclick="showSection('viewProfile')">View Phone Number</button>
-                        <button class="btn btn-warning" onclick="showSection('updatePasswordForm')">Edit
+                        <button class="btn btn-primary" onclick="showSection('viewEvaluatorProfile')">View Phone
+                            Number</button>
+                        <button class="btn btn-warning" onclick="showSection('updateEvaluatorPasswordForm')">Edit
                             Password</button>
-                        <button class="btn btn-success" onclick="showSection('updatePhoneForm')">Edit Phone
+                        <button class="btn btn-success" onclick="showSection('updateEvaluatorPhoneForm')">Edit Phone
                             Number</button>
                     </div>
 
                     <!-- View Profile Section -->
-                    <div id="viewProfile" class="section-content">
+                    <div id="viewEvaluatorProfile" class="section-content">
                         <h6><strong>Phone Number:</strong></h6>
-                        <p id="phoneNumber">{{ phone_number|default:"Not Provided" }}</p>
+                        <p id="evaluatorPhoneNumber">{{ phone_number|default:"Not Provided" }}</p>
                     </div>
 
-                    <!-- Update Password Form (Initially Hidden) -->
-                    <form id="updatePasswordForm" method="POST" action="{% url 'delivery_update_password' %}"
+                    <!-- Update Password Form -->
+                    <form id="updateEvaluatorPasswordForm" method="POST" action="{% url 'evaluator_update_password' %}"
                         class="section-content d-none">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <label for="oldPassword" class="form-label">Old Password</label>
-                            <input type="password" class="form-control" id="oldPassword" name="old_password" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="newPassword" class="form-label">New Password</label>
-                            <input type="password" class="form-control" id="newPassword" name="new_password" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                            <input type="password" class="form-control" id="confirmPassword" name="confirm_password"
+                            <label for="evaluatorOldPassword" class="form-label">Old Password</label>
+                            <input type="password" class="form-control" id="evaluatorOldPassword" name="old_password"
                                 required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="evaluatorNewPassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="evaluatorNewPassword" name="new_password"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="evaluatorConfirmPassword" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="evaluatorConfirmPassword"
+                                name="confirm_password" required>
                         </div>
                         <button type="submit" class="btn btn-warning">Update Password</button>
                     </form>
 
-                    <!-- Update Phone Number Form (Initially Hidden) -->
-                    <form id="updatePhoneForm" method="POST" action="{% url 'delivery_update_phone' %}"
+                    <!-- Update Phone Number Form -->
+                    <form id="updateEvaluatorPhoneForm" method="POST" action="{% url 'evaluator_update_phone' %}"
                         class="section-content d-none">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <label for="newPhone" class="form-label">New Phone Number</label>
-                            <input type="text" class="form-control" id="newPhone" name="new_phone" required>
+                            <label for="evaluatorNewPhone" class="form-label">New Phone Number</label>
+                            <input type="text" class="form-control" id="evaluatorNewPhone" name="new_phone" required>
                         </div>
                         <button type="submit" class="btn btn-success">Update Phone Number</button>
                     </form>
@@ -207,26 +279,23 @@
 
     <!-- Profile Button to Trigger Modal -->
     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="modal"
-        data-bs-target="#profileModal">
+        data-bs-target="#evaluatorProfileModal">
         <img src="admin/assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-        <span class="d-none d-md-block dropdown-toggle ps-2">Delivery Guy</span>
+        <span class="d-none d-md-block dropdown-toggle ps-2">Evaluator</span>
     </a>
 
     <!-- JavaScript for Toggling Sections -->
     <script>
         function showSection(sectionId) {
-            // Hide all sections
             document.querySelectorAll(".section-content").forEach(section => {
                 section.classList.add("d-none");
             });
-
-            // Show the selected section
             document.getElementById(sectionId).classList.remove("d-none");
         }
 
-        document.getElementById("updatePasswordForm").addEventListener("submit", function (e) {
-            let newPassword = document.getElementById("newPassword").value;
-            let confirmPassword = document.getElementById("confirmPassword").value;
+        document.getElementById("updateEvaluatorPasswordForm").addEventListener("submit", function (e) {
+            let newPassword = document.getElementById("evaluatorNewPassword").value;
+            let confirmPassword = document.getElementById("evaluatorConfirmPassword").value;
 
             if (newPassword !== confirmPassword) {
                 alert("New password and confirmation password do not match!");
@@ -234,6 +303,8 @@
             }
         });
     </script>
+
+
 
 
     <!-- Vendor JS Files -->
