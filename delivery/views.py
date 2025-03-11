@@ -11,10 +11,16 @@ from django.contrib.auth import update_session_auth_hash
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.urls import reverse
+from geopy.geocoders import Nominatim
 # Create your views here.
 
 
-
+def get_location(address):
+    geolocator = Nominatim(user_agent="geoapi")
+    location = geolocator.geocode(address)
+    if location:
+        return location.latitude, location.longitude
+    return None, None
 
 def dlv_home(request,pk):
     return render(request, 'delivery/home.html')
@@ -116,11 +122,22 @@ def select_dlv_product(request, pk, prod):
     return redirect('current_dlv_job', pk=pk)
 
 def current_job(request, pk):
-     # Check if evaluator is working on a product
-     dlv_guy = deliveryGuy.objects.filter(currently_working=1, deliveryGuy_user_id=pk).first()
-     current_product = dlv_guy.current_product if dlv_guy else None
+    dlv_guy = deliveryGuy.objects.filter(currently_working=1, deliveryGuy_user_id=pk).first()
+    current_product = dlv_guy.current_product if dlv_guy else None
 
-     return render(request, "delivery/job.html", {"product": current_product, "has_job": bool(current_product)})
+    seller_lat, seller_long = get_location(current_product.product_seller.address) if current_product else (None, None)
+    buyer_lat, buyer_long = get_location(current_product.product_buyer.address) if current_product else (None, None)
+
+    context = {
+        "product": current_product,
+        "has_job": bool(current_product),
+        "seller_lat": seller_lat,
+        "seller_long": seller_long,
+        "buyer_lat": buyer_lat,
+        "buyer_long": buyer_long,
+    }
+
+    return render(request, "delivery/job.html", context)
 
 @login_required
 def delivery_update_password(request):

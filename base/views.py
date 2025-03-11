@@ -120,12 +120,14 @@ def home(request, pk):
     except userFull.DoesNotExist:
         current_userFull = None  # Set to None if the userFull entry is missing
 
+    user_cart = cart.objects.filter(user=pk)
+    total_price = sum(item.product.product_sell_price * item.quantity for item in user_cart)
+    
     categories = product.objects.values_list('product_category', flat=True).distinct()
-
     categorized_products = {
         category: product.objects.filter(product_category=category)
         .exclude(product_seller=current_userFull)
-        .exclude(product_sold=True)
+        .exclude(product_sold=1)
         for category in categories
     } if current_userFull else {}  # Avoid filtering if userFull is missing
 
@@ -138,8 +140,21 @@ def home(request, pk):
         'categorized_products': categorized_products,
         'user_products': user_products,
         'current_userFull': current_userFull,
-        'user_credits': user_credits  # ✅ Now properly defined
+        'user_credits': user_credits,
+        'cart_items': user_cart, 
+        'total_price': total_price
     })
+    
+def delete_cart_item(request, pk ,item_id):
+    user = get_object_or_404(User, pk=pk)
+    item = get_object_or_404(cart, cart_id=item_id, user=user)
+    item.delete()
+    
+    product_obj = get_object_or_404(product, product_id=item.product.product_id)
+    product_obj.product_sold = 0
+    product_obj.save()
+    
+    return redirect("home", pk=user.id)
 
 
 
@@ -210,7 +225,7 @@ def add_to_cart(request, pk, pk2):
     if not created:
         cart_item.quantity += 1
         cart_item.save()
-    product_obj.product_sold = True
+    product_obj.product_sold = 1
     product_obj.save()
     return redirect("home", pk=pk)
 
