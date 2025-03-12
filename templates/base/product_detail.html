@@ -106,8 +106,12 @@
                             <p>{{ product.product_description }}</p>
                         </div>
                         <span class="divider"></span>
+                        <p>Currently you have : {{ user_credits.Credits }}</p>
                         <div class="product-btn-group">
-                            <div class="button buy-now"><i class='bx bxs-zap'></i> Buy Now</div>
+                            {% if product.product_sell_price < user_credits.Credits %}
+                            <a href="{% url 'direct_buy' user.id product.product_id %}"><div class="button buy-now"><i class='bx bxs-zap'></i> Buy Now</div></a>
+    
+                            {% endif %}
                             <a href="{% url 'add_to_cart' user.id product.product_id %}"><div class="button add-cart"><i class='bx bxs-cart'></i> Add to Cart</div></a>
                             <a href="{% url 'home' user.id %}" class="go-back-btn">
                                 <i class='bx bx-arrow-back'></i> Go Back

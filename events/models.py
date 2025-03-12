@@ -172,7 +172,7 @@ class deliveryJob(models.Model):
     deliveryJob_product = models.ForeignKey(product, on_delete=models.CASCADE)
     deliveryJob_seller = models.ForeignKey(userFull, on_delete=models.CASCADE, related_name='delivery_jobs_seller')
     deliveryJob_buyer = models.ForeignKey(userFull, on_delete=models.CASCADE, related_name='delivery_jobs_buyer')
-    deliveryJob_deliveryGuy = models.ForeignKey(deliveryGuy, on_delete=models.CASCADE)
+    deliveryJob_deliveryGuy = models.ForeignKey(deliveryGuy, on_delete=models.CASCADE, null=True)
     deliveryJob_status = models.IntegerField(default=0)
     
 class evaluatorJob(models.Model):

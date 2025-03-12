@@ -333,6 +333,10 @@
                             </tbody>
                         </table>
                         <h3>Total Price: ${{ total_price }}</h3>
+                        {% if total_price != 0 and total_price < user_credits.Credits %}
+                        <a href="{% url 'cart_to_buy' user.pk %}"><button type="button" class="btn btn-secondary">buy</button></a>
+
+                        {% endif %}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

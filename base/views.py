@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.http import JsonResponse
-from events.models import userFull, product, cart, PRODUCT_CATEGORIES, userCredits
+from events.models import userFull, product, cart, PRODUCT_CATEGORIES, userCredits, deliveryJob
 from django.contrib.auth import update_session_auth_hash
 from django.views.decorators.csrf import csrf_exempt
 
@@ -127,7 +127,7 @@ def home(request, pk):
     categorized_products = {
         category: product.objects.filter(product_category=category)
         .exclude(product_seller=current_userFull)
-        .exclude(product_sold=1)
+        .exclude(product_onDelivery=1)
         for category in categories
     } if current_userFull else {}  # Avoid filtering if userFull is missing
 
@@ -145,19 +145,72 @@ def home(request, pk):
         'total_price': total_price
     })
     
+def direct_buy(request, pk, item_id):
+    user = get_object_or_404(User, pk=pk)
+    user_full, _ = userFull.objects.get_or_create(user=user)
+    user_credits_obj, _ = userCredits.objects.get_or_create(user=user)
+    product_obj = get_object_or_404(product, pk=item_id)
+
+    user_credits_obj.Credits -= product_obj.product_sell_price
+    user_credits_obj.save()
+    product_obj.product_sold = 0
+    product_obj.product_onDelivery = 1
+    product_obj.save()
+    # Create a delivery job
+    deliveryJob.objects.create(
+        deliveryJob_product=product_obj,
+        deliveryJob_seller=product_obj.product_seller,
+        deliveryJob_buyer=user_full,
+        deliveryJob_status=0
+    )
+
+    return redirect('home', pk=pk)
+
+def cart_to_buy(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    user_cart = cart.objects.filter(user_id=user)
+    user_full, _ = userFull.objects.get_or_create(user=user)
+    
+    if not user_cart.exists():
+        return redirect('home', pk=pk)
+    
+    total_price = sum(item.product.product_sell_price * item.quantity for item in user_cart)
+    user_credits, created = userCredits.objects.get_or_create(user_id=user)
+
+    
+    if user_credits.Credits < total_price:
+        return redirect('home', pk=pk)
+    
+    user_credits.Credits -= total_price
+    user_credits.save()
+    
+    for item in user_cart:
+        product_obj = item.product
+        product_obj.product_sold = 0
+        product_obj.product_onDelivery = 1
+        product_obj.save()
+        
+        deliveryJob.objects.create(
+            deliveryJob_product=product_obj,
+            deliveryJob_seller=product_obj.product_seller,
+            deliveryJob_buyer=user_full,
+            deliveryJob_status=0
+        )
+    
+    user_cart.delete()
+    
+    return redirect('home', pk=pk)
+
 def delete_cart_item(request, pk ,item_id):
     user = get_object_or_404(User, pk=pk)
     item = get_object_or_404(cart, cart_id=item_id, user=user)
     item.delete()
     
     product_obj = get_object_or_404(product, product_id=item.product.product_id)
-    product_obj.product_sold = 0
+    product_obj.product_onDelivery = 0
     product_obj.save()
     
     return redirect("home", pk=user.id)
-
-
-
 
 
 
@@ -213,7 +266,8 @@ def sell(request, pk):
 def product_detail(request, pk, pk2):
     current_userFull = userFull.objects.get(user=pk)
     product_obj = get_object_or_404(product, product_id=pk2)
-    return render(request, 'base/product_detail.html', {'product': product_obj, 'user': current_userFull.user})
+    user_credits, created = userCredits.objects.get_or_create(user_id=pk, defaults={"Credits": 0})
+    return render(request, 'base/product_detail.html', {'product': product_obj, 'user': current_userFull.user, "user_credits" : user_credits})
 
 @login_required
 def add_to_cart(request, pk, pk2):
@@ -225,7 +279,7 @@ def add_to_cart(request, pk, pk2):
     if not created:
         cart_item.quantity += 1
         cart_item.save()
-    product_obj.product_sold = 1
+    product_obj.product_onDelivery = 1
     product_obj.save()
     return redirect("home", pk=pk)
 
@@ -287,7 +341,6 @@ def delete_account(request):
         return redirect("Index")  # Ensure 'home' is a valid URL
 
     return redirect("profile", pk=request.user.pk)  # Redirect to profile if not POST
- # Import userFull model
 
 @login_required
 def edit_profile(request):
@@ -315,7 +368,7 @@ def edit_profile(request):
 def buy_credits(request, pk):
     if request.user.pk != pk:
         return redirect('home', pk=request.user.pk)
- 
+
 
     user = get_object_or_404(User, pk=pk)
     
