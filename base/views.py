@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from events.models import userFull, product, cart, PRODUCT_CATEGORIES, userCredits, deliveryJob
 from django.contrib.auth import update_session_auth_hash
 from django.views.decorators.csrf import csrf_exempt
+from django.db import models
 
 
 User = get_user_model()
@@ -136,16 +137,32 @@ def home(request, pk):
     # ✅ Ensure userCredits exists
     user_credits, created = userCredits.objects.get_or_create(user_id=pk, defaults={"Credits": 0})
 
+    # Fetch delivery jobs related to the current user
+    delivery_jobs = deliveryJob.objects.filter(
+        models.Q(deliveryJob_seller=current_userFull) | models.Q(deliveryJob_buyer=current_userFull)
+    ).select_related(
+        'deliveryJob_product', 'deliveryJob_seller', 'deliveryJob_buyer', 'deliveryJob_deliveryGuy'
+    )
+
+    # Split delivery jobs into two parts:
+    # 1. Orders with deliveryJob_status < 3 (Pending, In Progress, Completed)
+    active_delivery_jobs = delivery_jobs.filter(deliveryJob_status__lt=3)
+    # 2. Orders with deliveryJob_status == 3 (Cancelled)
+    cancelled_delivery_jobs = delivery_jobs.filter(deliveryJob_status=3)
+
     return render(request, 'base/home.html', {
         'categorized_products': categorized_products,
         'user_products': user_products,
         'current_userFull': current_userFull,
         'user_credits': user_credits,
         'cart_items': user_cart, 
-        'total_price': total_price
+        'total_price': total_price,
+        'active_delivery_jobs': active_delivery_jobs,  # Pass active delivery jobs
+        'cancelled_delivery_jobs': cancelled_delivery_jobs,  # Pass cancelled delivery jobs
     })
     
 def direct_buy(request, pk, item_id):
+
     user = get_object_or_404(User, pk=pk)
     user_full, _ = userFull.objects.get_or_create(user=user)
     user_credits_obj, _ = userCredits.objects.get_or_create(user=user)

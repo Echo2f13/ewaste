@@ -27,7 +27,8 @@
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
     <style>
         .buy-credits-btn {
-            background: linear-gradient(45deg, #ff7e5f, #feb47b); /* Gradient effect */
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            /* Gradient effect */
             color: white;
             font-weight: bold;
             border-radius: 25px;
@@ -37,23 +38,29 @@
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
             transition: 0.3s;
         }
+
         .buy-credits-btn:hover {
             transform: scale(1.05);
             box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.3);
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
-        th, td {
+
+        th,
+        td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
+
         th {
             background-color: #4CAF50;
             color: white;
         }
+
         button {
             background-color: #f44336;
             color: white;
@@ -62,18 +69,20 @@
             border-radius: 4px;
             cursor: pointer;
         }
+
         button:hover {
             background-color: #d32f2f;
         }
+
         .total {
             text-align: right;
             margin-top: 15px;
             font-weight: bold;
             color: #4CAF50;
         }
-    
     </style>
 </head>
+
 <body>
     <div id="preloader-active">
         <div class="preloader d-flex align-items-center justify-content-center">
@@ -113,7 +122,7 @@
                                                         🌕 <span id="creditBalance">{{ user_credits.Credits }}</span>
                                                     </a>
                                                     <div class="dropdown-menu" aria-labelledby="creditsDropdown">
-                                                        <a class="dropdown-item btn btn-success text-white fw-bold rounded-pill shadow-sm px-4" 
+                                                        <a class="dropdown-item btn btn-success text-white fw-bold rounded-pill shadow-sm px-4"
                                                             href="#" data-toggle="modal" data-target="#creditsModal">
                                                             Buy Credits
                                                         </a>
@@ -167,7 +176,7 @@
                                         lead to a surge in
                                         outdated gadgets, contributing to e-waste.</p>
                                     <a href="{% url 'sell' user.id %}" class="btn hero-btn" data-animation="fadeInLeft"
-                                        data-delay="0.7s">Sell</a> &nbsp;&nbsp; &nbsp;
+                                        data-delay="0.7s">Sell</a>
                                     <a href="#selling_products" data-toggle="modal" class="btn hero-btn"
                                         data-animation="fadeInLeft" data-delay="0.7s">View
                                         selling products</a>
@@ -175,9 +184,9 @@
                                     <br>
                                     <br>
                                     <p>View the products you bought here</p>
-                                    <a href="#order_history" data-toggle="modal" class="btn hero-btn"
-                                        data-animation="fadeInLeft" data-delay="0.7s">your
-                                        orders & History</a> &nbsp;&nbsp; &nbsp;
+                                    <a href="#delivery_jobs" data-toggle="modal" class="btn hero-btn"
+                                        data-animation="fadeInLeft" data-delay="0.7s">Your Delivery Jobs</a>
+
                                     <a href="#user_cart" data-toggle="modal" class="btn hero-btn"
                                         data-animation="fadeInLeft" data-delay="0.7s">Cart</a>
                                 </div>
@@ -315,7 +324,8 @@
                                 {% for item in cart_items %}
                                 <tr>
                                     <td><img style="width:100%; height: 100px; border-radius: 10px 10px 10px 10px;"
-                                src="{{ item.product.product_image_1.url }}" alt="{{ product.product_description }}"></td>
+                                            src="{{ item.product.product_image_1.url }}"
+                                            alt="{{ product.product_description }}"></td>
                                     <td>{{ item.product.product_name }}</td>
                                     <td>${{ item.product.product_sell_price }}</td>
                                     <td>
@@ -333,9 +343,107 @@
                             </tbody>
                         </table>
                         <h3>Total Price: ${{ total_price }}</h3>
-                        {% if total_price != 0 and total_price < user_credits.Credits %}
-                        <a href="{% url 'cart_to_buy' user.pk %}"><button type="button" class="btn btn-secondary">buy</button></a>
+                        {% if total_price != 0 and total_price < user_credits.Credits %} <a
+                            href="{% url 'cart_to_buy' user.pk %}"><button type="button"
+                                class="btn btn-secondary">buy</button></a>
 
+                            {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Delivery Jobs Modal -->
+        <div class="modal fade" id="delivery_jobs" tabindex="-1" role="dialog" aria-labelledby="deliveryJobsTitle"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deliveryJobsTitle"><b style="font-size: 22px;">Your Delivery
+                                Jobs</b></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Active Delivery Jobs (Status < 3) -->
+                        <h4>Active Delivery Jobs</h4>
+                        {% if active_delivery_jobs %}
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Buyer</th>
+                                    <th>Delivery Person</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for job in active_delivery_jobs %}
+                                <tr>
+                                    <td>{{ job.deliveryJob_product.product_name }}</td>
+                                    <td>{{ job.deliveryJob_buyer.user.username }}</td>
+                                    <td>
+                                        {% if job.deliveryJob_deliveryGuy %}
+                                        {{ job.deliveryJob_deliveryGuy.deliveryGuy_user.username }}
+                                        {% else %}
+                                        <span class="badge badge-warning">Not Assigned</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if job.deliveryJob_status == 0 %}
+                                        <span class="badge badge-warning">Pending</span>
+                                        {% elif job.deliveryJob_status == 1 %}
+                                        <span class="badge badge-primary">In Progress</span>
+                                        {% elif job.deliveryJob_status == 2 %}
+                                        <span class="badge badge-success">Completed</span>
+                                        {% else %}
+                                        <span class="badge badge-danger">Unknown</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <p>No active delivery jobs found.</p>
+                        {% endif %}
+
+                        <!-- Cancelled Delivery Jobs (Status == 3) -->
+                        <h4>Delivery Jobs Completed</h4>
+                        {% if cancelled_delivery_jobs %}
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Buyer</th>
+                                    <th>Delivery Person</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for job in cancelled_delivery_jobs %}
+                                <tr>
+                                    <td>{{ job.deliveryJob_product.product_name }}</td>
+                                    <td>{{ job.deliveryJob_buyer.user.username }}</td>
+                                    <td>
+                                        {% if job.deliveryJob_deliveryGuy %}
+                                        {{ job.deliveryJob_deliveryGuy.deliveryGuy_user.username }}
+                                        {% else %}
+                                        <span class="badge badge-warning">Not Assigned</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-danger">Cancelled</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <p>No Delivery Jobs Completed.</p>
                         {% endif %}
                     </div>
                     <div class="modal-footer">
@@ -344,27 +452,7 @@
                 </div>
             </div>
         </div>
-        <!-- Modal -->
-        <div class="modal fade" id="order_history" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-            aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalCenterTitle"><b style="font-size: 22px;">Your Cart</b>
-                        </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Your Order history is coming soon is coming soon</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+
 
 
     </main>
