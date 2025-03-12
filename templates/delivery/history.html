@@ -19,7 +19,6 @@
     <link
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
         rel="stylesheet">
-    
 
     <!-- Vendor CSS Files -->
     <link href="{% static 'admin/assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -32,59 +31,26 @@
 
     <!-- Template Main CSS File -->
     <link href="{% static 'admin/assets/css/style.css' %}" rel="stylesheet">
-
-
-    <script>
-        function initMap() {
-            // Extract coordinates safely
-            var sellerLat = parseFloat("{{ seller_lat }}") || 0;
-            var sellerLng = parseFloat("{{ seller_long }}") || 0;
-            var buyerLat = parseFloat("{{ buyer_lat }}") || 0;
-            var buyerLng = parseFloat("{{ buyer_long }}") || 0;
-    
-            // Default center (if invalid values are provided)
-            var centerLat = sellerLat || buyerLat || 0;
-            var centerLng = sellerLng || buyerLng || 0;
-    
-            // Initialize the map
-            var map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 12,
-                center: { lat: centerLat, lng: centerLng }
-            });
-    
-            var markers = [
-                {
-                    position: { lat: sellerLat, lng: sellerLng },
-                    icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
-                    title: 'Seller Location'
-                },
-                {
-                    position: { lat: buyerLat, lng: buyerLng },
-                    icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-                    title: 'Buyer Location'
-                }
-            ];
-    
-            // Add markers to the map
-            markers.forEach(function (markerData) {
-                if (markerData.position.lat !== 0 && markerData.position.lng !== 0) {
-                    new google.maps.Marker({
-                        position: markerData.position,
-                        map: map,
-                        icon: markerData.icon,
-                        title: markerData.title
-                    });
-                }
-            });
+    <style>
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
-    </script>
-    
-    
-    
-    <!-- Load Google Maps API -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDYNRMNE79q4PRFknBXsMXA6VnxezRMkB0&callback=initMap"></script>
-    
-
+        .history-table th, .history-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .history-table th {
+            background-color: #f4f4f4;
+        }
+        .no-history {
+            color: #777;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+    </style>
 
     <!-- =======================================================
   * Template Name: NiceAdmin
@@ -128,10 +94,11 @@
 
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="#" data-bs-toggle="modal"
-                                data-bs-target="#evaluatorProfileModal">
+                                data-bs-target="#profileModal">
                                 <i class="bi bi-person"></i>
                                 <span>My Profile</span>
                             </a>
+
                         </li>
                         <li>
                             <hr class="dropdown-divider">
@@ -159,7 +126,7 @@
         <ul class="sidebar-nav" id="sidebar-nav">
 
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link collapsed" href="{% url 'current_dlv_job' user.pk %}">
                     <i class="bi bi-grid"></i>
                     <span>Current Jobs</span>
                 </a>
@@ -171,16 +138,13 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="{% url 'delivery_history' user.pk %}">
+                <a class="nav-link" href="#">
                     <i class="bi bi-grid"></i>
                     <span>History</span>
                 </a>
             </li>
 
-
-
-
-
+            <!-- End Dashboard Nav -->
         </ul>
 
     </aside><!-- End Sidebar-->
@@ -190,43 +154,34 @@
 
             <div class="pagetitle">
                 <div class="container">
-                    <h2>Current Delivery Job</h2>
-                    <div id="map" style="width: 100%; height: 400px;"></div>
+                    <h2>Delivery History</h2>
                 
-                    {% if has_job %}
-                        <div class="product-card">
-                            <h3>{{ product.product_name }}</h3>
-                            <div class="product-details">
-                                <p><strong>Category:</strong> {{ product.product_category }}</p>
-                                <p><strong>Description:</strong> {{ product.product_description }}</p>
-                            </div>
-                
-                            {% if deliveryJob_status == 1 %}
-                                <p class="status">Delivery Guy Assigned</p>
-                                <form method="POST" action="{% url 'mark_parcel_taken' user.pk %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-primary">Parcel Taken</button>
-                                </form>
-                
-                            {% elif deliveryJob_status == 2 %}
-                                <p class="status">Parcel Collected from Seller</p>
-                                <form method="POST" action="{% url 'complete_delivery' user.pk %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-success">Complete Delivery</button>
-                                </form>
-                
-                            {% elif deliveryJob_status == 3 %}
-                                <p class="status success">Product Delivered</p>
-                
-                            {% else %}
-                                <p class="status error">Unknown Status</p>
-                            {% endif %}
-                        </div>
+                    {% if completed_jobs %}
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>Seller</th>
+                                    <th>Buyer</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for job in completed_jobs %}
+                                <tr>
+                                    <td>{{ job.deliveryJob_product.product_name }}</td>
+                                    <td>{{ job.deliveryJob_product.product_category }}</td>
+                                    <td>{{ job.deliveryJob_seller.user.first_name }}</td>
+                                    <td>{{ job.deliveryJob_buyer.user.first_name }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     {% else %}
-                        <p class="no-job">You are not currently working on any product.</p>
+                        <p class="no-history">No completed deliveries found.</p>
                     {% endif %}
                 </div>
-                
+
             </div><!-- End Page Title -->
         </center>
 
@@ -298,6 +253,94 @@
     </div>
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
             class="bi bi-arrow-up-short"></i></a>
+
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLabel">Delivery Guy Profile Settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Buttons to Toggle Sections -->
+                    <div class="d-grid gap-2 mb-3">
+                        <button class="btn btn-primary" onclick="showSection('viewProfile')">View Phone Number</button>
+                        <button class="btn btn-warning" onclick="showSection('updatePasswordForm')">Edit
+                            Password</button>
+                        <button class="btn btn-success" onclick="showSection('updatePhoneForm')">Edit Phone
+                            Number</button>
+                    </div>
+
+                    <!-- View Profile Section -->
+                    <div id="viewProfile" class="section-content">
+                        <h6><strong>Phone Number:</strong></h6>
+                        <p id="phoneNumber">{{ phone_number|default:"Not Provided" }}</p>
+                    </div>
+
+                    <!-- Update Password Form (Initially Hidden) -->
+                    <form id="updatePasswordForm" method="POST" action="{% url 'delivery_update_password' %}"
+                        class="section-content d-none">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="oldPassword" class="form-label">Old Password</label>
+                            <input type="password" class="form-control" id="oldPassword" name="old_password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" name="new_password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirm_password"
+                                required>
+                        </div>
+                        <button type="submit" class="btn btn-warning">Update Password</button>
+                    </form>
+
+                    <!-- Update Phone Number Form (Initially Hidden) -->
+                    <form id="updatePhoneForm" method="POST" action="{% url 'delivery_update_phone' %}"
+                        class="section-content d-none">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="newPhone" class="form-label">New Phone Number</label>
+                            <input type="text" class="form-control" id="newPhone" name="new_phone" required>
+                        </div>
+                        <button type="submit" class="btn btn-success">Update Phone Number</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Button to Trigger Modal -->
+    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="modal"
+        data-bs-target="#profileModal">
+        <img src="admin/assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+        <span class="d-none d-md-block dropdown-toggle ps-2">Delivery Guy</span>
+    </a>
+
+    <!-- JavaScript for Toggling Sections -->
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll(".section-content").forEach(section => {
+                section.classList.add("d-none");
+            });
+
+            // Show the selected section
+            document.getElementById(sectionId).classList.remove("d-none");
+        }
+
+        document.getElementById("updatePasswordForm").addEventListener("submit", function (e) {
+            let newPassword = document.getElementById("newPassword").value;
+            let confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (newPassword !== confirmPassword) {
+                alert("New password and confirmation password do not match!");
+                e.preventDefault();
+            }
+        });
+    </script>
 
 
     <!-- Vendor JS Files -->

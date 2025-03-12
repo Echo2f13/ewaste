@@ -108,36 +108,100 @@ def dlv_logout(request):
 
 def dlv_more_jobs(request, pk):
     has_job = deliveryGuy.objects.filter(currently_working=1, deliveryGuy_user_id=pk).exists()
-    products = product.objects.filter(product_sold=0, product_onDelivery = 0)
+    products = product.objects.filter(product_sold=0, product_onDelivery = 1) 
     return render(request, "delivery/more_jobs.html", {"products": products, "has_job": has_job})
 
 def select_dlv_product(request, pk, prod):
-    dlv_guy = deliveryGuy.objects.filter(currently_working=0, deliveryGuy_user_id=pk).first()
+    dlv_guy = deliveryGuy.objects.filter(currently_working=False, deliveryGuy_user_id=pk).first()
+
     if dlv_guy:
         current_product = get_object_or_404(product, product_id=prod)
+        current_product.product_sold = 1
+        current_product.save()
+        
+        # Assign the product to the delivery guy
         dlv_guy.current_product = current_product
-        dlv_guy.currently_working = 1
+        dlv_guy.currently_working = True
         dlv_guy.save()
-        deliveryJob.objects.create(deliveryJob_product=current_product, deliveryJob_deliveryGuy=dlv_guy)
+        
+        # Fetch the corresponding delivery job
+        current_dlv_product = get_object_or_404(deliveryJob, deliveryJob_product=current_product)
+        current_dlv_product.deliveryJob_deliveryGuy = dlv_guy
+        current_dlv_product.deliveryJob_status = 1
+        current_dlv_product.save()  # Save the updated job
+        
     return redirect('current_dlv_job', pk=pk)
 
-def current_job(request, pk):
-    dlv_guy = deliveryGuy.objects.filter(currently_working=1, deliveryGuy_user_id=pk).first()
-    current_product = dlv_guy.current_product if dlv_guy else None
 
-    seller_lat, seller_long = get_location(current_product.product_seller.address) if current_product else (None, None)
-    buyer_lat, buyer_long = get_location(current_product.product_buyer.address) if current_product else (None, None)
+def current_dlv_job(request, pk):
+    dlv_guy = deliveryGuy.objects.filter(currently_working=True, deliveryGuy_user_id=pk).first()
 
+    if not dlv_guy or not dlv_guy.current_product:
+        print("working no dlv guy")
+        return render(request, "delivery/job.html", {"has_job": False})  # No active job
+
+    # Fetch the active delivery job
+    dlv_job = deliveryJob.objects.filter(deliveryJob_deliveryGuy=dlv_guy, deliveryJob_product=dlv_guy.current_product).first()
+
+    if not dlv_job:
+        print("working no dlv job")
+        return render(request, "delivery/job.html", {"has_job": False})  # No active delivery job
+
+    # Get product details
+    current_product = dlv_job.deliveryJob_product
+
+    # Get seller and buyer locations (handle cases where location fetching might fail)
+# Construct full address for seller and buyer
+    seller_address = f"{current_product.product_seller.userFull_street}, {current_product.product_seller.userFull_city}, {current_product.product_seller.userFull_state}, {current_product.product_seller.userFull_zipcode}, {current_product.product_seller.userFull_country}"
+    buyer_address = f"{dlv_job.deliveryJob_buyer.userFull_street}, {dlv_job.deliveryJob_buyer.userFull_city}, {dlv_job.deliveryJob_buyer.userFull_state}, {dlv_job.deliveryJob_buyer.userFull_zipcode}, {dlv_job.deliveryJob_buyer.userFull_country}"
+
+    # Fetch latitude and longitude using the complete address
+    seller_location = get_location(seller_address) or (None, None)
+    buyer_location = get_location(buyer_address) or (None, None)
+
+    # Extract latitude and longitude values
+    seller_lat, seller_long = seller_location
+    buyer_lat, buyer_long = buyer_location
     context = {
         "product": current_product,
-        "has_job": bool(current_product),
+        "has_job": True,
         "seller_lat": seller_lat,
         "seller_long": seller_long,
         "buyer_lat": buyer_lat,
         "buyer_long": buyer_long,
+        "deliveryJob_status" : dlv_job.deliveryJob_status
     }
 
     return render(request, "delivery/job.html", context)
+
+def mark_parcel_taken(request, pk):
+    dlv_job = get_object_or_404(deliveryJob, deliveryJob_deliveryGuy__deliveryGuy_user_id=pk, deliveryJob_status=1)
+    
+    dlv_job.deliveryJob_status = 2
+    dlv_job.save()
+    
+    return redirect('current_dlv_job', pk=pk)
+
+def complete_delivery(request, pk):
+    dlv_job = get_object_or_404(deliveryJob, deliveryJob_deliveryGuy__deliveryGuy_user_id=pk, deliveryJob_status=2)
+    
+    dlv_job.deliveryJob_status = 3  # Mark as delivered
+    dlv_job.save()
+    
+    # Reset delivery guy's current job
+    dlv_guy = dlv_job.deliveryJob_deliveryGuy
+    if dlv_guy:
+        dlv_guy.current_product = None
+        dlv_guy.currently_working = False
+        dlv_guy.save()
+    
+    return redirect('current_dlv_job', pk=pk)
+
+def delivery_history(request, pk):
+    completed_jobs = deliveryJob.objects.filter(deliveryJob_deliveryGuy__deliveryGuy_user_id=pk, deliveryJob_status=3)
+
+    return render(request, "delivery/history.html", {"completed_jobs": completed_jobs})
+
 
 @login_required
 def delivery_update_password(request):

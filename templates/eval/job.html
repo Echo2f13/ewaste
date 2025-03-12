@@ -73,7 +73,8 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
+                            <a class="dropdown-item d-flex align-items-center" href="#" data-bs-toggle="modal"
+                                data-bs-target="#evaluatorProfileModal">
                                 <i class="bi bi-person"></i>
                                 <span>My Profile</span>
                             </a>
@@ -97,7 +98,67 @@
             </ul>
         </nav><!-- End Icons Navigation -->
     </header><!-- End Header -->
+    <div class="modal fade" id="evaluatorProfileModal" tabindex="-1" aria-labelledby="evaluatorProfileModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="evaluatorProfileModalLabel">Evaluator Profile Settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Buttons to Toggle Sections -->
+                    <div class="d-grid gap-2 mb-3">
+                        <button class="btn btn-primary" onclick="showSection('viewEvaluatorProfile')">View Phone
+                            Number</button>
+                        <button class="btn btn-warning" onclick="showSection('updateEvaluatorPasswordForm')">Edit
+                            Password</button>
+                        <button class="btn btn-success" onclick="showSection('updateEvaluatorPhoneForm')">Edit Phone
+                            Number</button>
+                    </div>
 
+                    <!-- View Profile Section -->
+                    <div id="viewEvaluatorProfile" class="section-content">
+                        <h6><strong>Phone Number:</strong></h6>
+                        <p id="evaluatorPhoneNumber">{{ phone_number|default:"Not Provided" }}</p>
+                    </div>
+
+                    <!-- Update Password Form -->
+                    <form id="updateEvaluatorPasswordForm" method="POST" action="{% url 'evaluator_update_password' %}"
+                        class="section-content d-none">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="evaluatorOldPassword" class="form-label">Old Password</label>
+                            <input type="password" class="form-control" id="evaluatorOldPassword" name="old_password"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="evaluatorNewPassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="evaluatorNewPassword" name="new_password"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="evaluatorConfirmPassword" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="evaluatorConfirmPassword"
+                                name="confirm_password" required>
+                        </div>
+                        <button type="submit" class="btn btn-warning">Update Password</button>
+                    </form>
+
+                    <!-- Update Phone Number Form -->
+                    <form id="updateEvaluatorPhoneForm" method="POST" action="{% url 'evaluator_update_phone' %}"
+                        class="section-content d-none">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="evaluatorNewPhone" class="form-label">New Phone Number</label>
+                            <input type="text" class="form-control" id="evaluatorNewPhone" name="new_phone" required>
+                        </div>
+                        <button type="submit" class="btn btn-success">Update Phone Number</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- ======= Sidebar ======= -->
     <aside id="sidebar" class="sidebar">
 
@@ -122,19 +183,6 @@
                 </a>
             </li>
 
-            <!-- End Dashboard Nav -->
-
-
-
-            <li class="nav-heading">Pages</li>
-
-            <li class="nav-item">
-                <!-- <a class="nav-link collapsed" href="#"> -->
-                <a class="nav-link collapsed" href="#">
-                    <i class="bi bi-person"></i>
-                    <span>Profile</span>
-                </a>
-            </li><!-- End Profile Page Nav -->
 
 
 
