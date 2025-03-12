@@ -25,6 +25,25 @@
     <link rel="stylesheet" href="{% static 'assets/css/nice-select.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
     <title>Signup Student</title>
+
+    <style>
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #454646;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 1.7rem;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        .back-button:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+    </style>
 </head>
 
 <body>
@@ -42,6 +61,8 @@
     <!-- Preloader Start-->
     <!-- Register -->
     <main class="login-body" data-vide-bg="{% static 'assets/img/login-bg.mp4' %}">
+
+        <a href="{% url 'Index' %}" class="back-button">← Back to Home</a>
         <!-- Login Admin -->
         <form class="form-default" action="{% url 'signupForm' %}" method="POST">
 
@@ -76,7 +97,7 @@
                     <label for="name">Email Address</label>
                     <input type="email" placeholder="email" name="email">
                 </div>
-                
+
                 <div class="form-input">
                     <label for="phone_number">Phone Number</label>
                     <input type="text" placeholder="phone number" name="phone_number">
@@ -88,9 +109,10 @@
                 <div class="form-input pt-30">
                     <input type="submit" name="submit">
                 </div>
-            </form>
-                <a href="{% url 'loginForm' %}" class="registration">login</a>
-            </div>
+        </form>
+        <a href="{% url 'loginForm' %}" class="registration">Already Have an account? Login Here
+        </a>
+        </div>
         <!-- /end login form -->
     </main>
 

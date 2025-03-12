@@ -25,6 +25,25 @@
     <link rel="stylesheet" href="{% static 'assets/css/nice-select.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
     <title>User Login</title>
+
+    <style>
+                .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #454646;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 1.7rem;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        .back-button:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+    </style>
 </head>
 
 <body>
@@ -39,9 +58,11 @@
             </div>
         </div>
     </div>
-    <!-- Preloader Start-->
-    <!-- Register -->
+
     <main class="login-body" data-vide-bg="{% static 'assets/img/login-bg.mp4' %}">
+
+        <a href="{% url 'signupForm' %}" class="back-button">← Back to Signup</a>
+
         <form class="form-default" action="{% url 'loginForm' %}" method="POST">
         
         <div class=" login-form">
