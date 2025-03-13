@@ -369,7 +369,7 @@
                     </div>
                     <div class="modal-body">
                         <!-- Active Delivery Jobs (Status < 3) -->
-                        <h4>Active Delivery Jobs</h4>
+                        <h4>Active Deliveries</h4>
                         {% if active_delivery_jobs %}
                         <table class="table">
                             <thead>
@@ -396,9 +396,9 @@
                                         {% if job.deliveryJob_status == 0 %}
                                         <span class="badge badge-warning">Pending</span>
                                         {% elif job.deliveryJob_status == 1 %}
-                                        <span class="badge badge-primary">In Progress</span>
+                                        <span class="badge badge-primary">In transit</span>
                                         {% elif job.deliveryJob_status == 2 %}
-                                        <span class="badge badge-success">Completed</span>
+                                        <span class="badge badge-success">Out for shipping</span>
                                         {% else %}
                                         <span class="badge badge-danger">Unknown</span>
                                         {% endif %}
@@ -412,7 +412,7 @@
                         {% endif %}
 
                         <!-- Cancelled Delivery Jobs (Status == 3) -->
-                        <h4>Delivery Jobs Completed</h4>
+                        <h4>Delivery History</h4>
                         {% if cancelled_delivery_jobs %}
                         <table class="table">
                             <thead>
@@ -436,14 +436,14 @@
                                         {% endif %}
                                     </td>
                                     <td>
-                                        <span class="badge badge-danger">Cancelled</span>
+                                        <span class="badge badge-danger">Delivered</span>
                                     </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                         {% else %}
-                        <p>No Delivery Jobs Completed.</p>
+                        <p>No Delivery Completed.</p>
                         {% endif %}
                     </div>
                     <div class="modal-footer">
