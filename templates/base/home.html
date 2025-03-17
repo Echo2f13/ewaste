@@ -104,7 +104,7 @@
                             <!-- Logo -->
                             <div class="col-xl-2 col-lg-2">
                                 <div class="logo">
-                                    <h1 style="color: aliceblue;">EWMS</h1>
+                                    <h1 style="color: aliceblue;">EcoN</h1>
                                 </div>
                             </div>
                             <div class="col-xl-10 col-lg-10">
@@ -130,7 +130,7 @@
                                                 </li>
 
                                                 <li class="dropdown">
-                                                    <img src="{% static 'assets/img/post/post_4.png' %}"
+                                                    <img src="{{ current_userFull.userFull_image.url }}"
                                                         alt="{% static 'assets/img/post/post_4.png' %}"
                                                         class="profile-icon"> <span class="menu-dots">⫶</span>
                                                     <ul style="margin:0px; padding:0px;" class="dropdown-menu">
