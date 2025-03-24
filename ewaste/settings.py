@@ -133,3 +133,12 @@ LOGIN_URL = '/login/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# DEFAULT_FROM_EMAIL = 'workorbit@gmail.com'
+# SERVER_EMAIL = 'workorbit@gmail.com'
+EMAIL_USE_TLS = 'True'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'ecoearn3@gmail.com'
+EMAIL_HOST_PASSWORD = 'oqzw unps sayf aweu'

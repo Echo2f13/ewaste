@@ -10,6 +10,10 @@ from events.models import userFull, product, cart, PRODUCT_CATEGORIES, userCredi
 from django.contrib.auth import update_session_auth_hash
 from django.views.decorators.csrf import csrf_exempt
 from django.db import models
+from django.core.mail import send_mail
+from django.contrib.sites.shortcuts import get_current_site
+from django.conf import settings
+
 
 
 User = get_user_model()
@@ -400,3 +404,32 @@ def buy_credits(request, pk):
 
     return redirect('home', pk=pk)# Redirect back to home
 
+@login_required
+def support(request, pk):
+    return render(request, 'base/support.html')
+
+@login_required
+def support_form(request, pk):
+    userfull = userFull.objects.filter(user_id = pk).first()
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        subject = request.POST.get("subject")
+        message = request.POST.get("message")
+
+        current_site = get_current_site(request)
+        abs_url = f"http://{current_site.domain}/support"
+        email_subject = f"Support Request: {subject}"
+        email_message = f"Hello {name},\nSupport Team,\n Thanks for contacting us, conform your message.\n{message}\nyour phone number: {userfull.userFull_phoneNumber}\nwe will contact you as soon as we can."
+
+        send_mail(
+            email_subject,
+            email_message,
+            settings.EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
+        )
+
+        return render(request, "base/support.html", {"success": "Your request has been submitted!"})
+
+    return render(request, "base/support.html")
