@@ -158,10 +158,13 @@ def current_dlv_job(request, pk):
     # Fetch latitude and longitude using the complete address
     seller_location = get_location(seller_address) or (None, None)
     buyer_location = get_location(buyer_address) or (None, None)
+    
 
     # Extract latitude and longitude values
-    seller_lat, seller_long = seller_location
-    buyer_lat, buyer_long = buyer_location
+    seller_lat =  current_product.product_seller.lon
+    seller_long = current_product.product_seller.lat
+    buyer_lat = dlv_job.deliveryJob_buyer.lon
+    buyer_long = dlv_job.deliveryJob_buyer.lat
     context = {
         "product": current_product,
         "has_job": True,

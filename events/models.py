@@ -40,6 +40,8 @@ class userFull(models.Model):
     userFull_state = models.CharField(max_length=100, null=True, blank=True)
     userFull_zipcode = models.CharField(max_length=20, null=True, blank=True)
     userFull_country = models.CharField(max_length=100, null=True, blank=True)
+    lon = models.CharField(max_length=200, null=True)
+    lat = models.CharField(max_length=200, null=True)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userFull')
 

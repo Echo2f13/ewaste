@@ -313,6 +313,8 @@ def change_address(request):
         state = request.POST.get("state")
         zipcode = request.POST.get("zipcode")
         country = request.POST.get("country")
+        long = request.POST.get("long")
+        lati = request.POST.get("lati")
 
         profile, _ = userFull.objects.update_or_create(
             user=request.user,
@@ -322,6 +324,8 @@ def change_address(request):
                 "userFull_state": state,
                 "userFull_zipcode": zipcode,
                 "userFull_country": country,
+                "lon": long,
+                "lat": lati,
             },
         )
 
