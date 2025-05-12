@@ -141,4 +141,4 @@ EMAIL_USE_TLS = 'True'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'ecoearn3@gmail.com'
-EMAIL_HOST_PASSWORD = 'oqzw unps sayf aweu'
+EMAIL_HOST_PASSWORD = 'wpdn fsib zuol tkcd'
